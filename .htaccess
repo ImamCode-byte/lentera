@@ -1,0 +1,16 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+# 1. Arahkan aset statis langsung ke frontends/webs
+RewriteRule ^csss/(.*)$ frontends/webs/csss/$1 [L]
+RewriteRule ^jss/(.*)$ frontends/webs/jss/$1 [L]
+RewriteRule ^imgs/(.*)$ frontends/webs/imgs/$1 [L]
+RewriteRule ^viewss/(.*)$ frontends/webs/viewss/$1 [L]
+
+# 2. Arahkan root ke indexs.php
+RewriteRule ^$ frontends/webs/indexs.php [L]
+
+# 3. Routing dinamis
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ frontends/webs/indexs.php?urls=$1 [QSA,L]
