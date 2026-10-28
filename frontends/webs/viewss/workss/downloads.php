@@ -16,7 +16,20 @@ $work_models = new workss();
 $works = $work_models->find_by_ids($work_ids);
 
 if (!$works || empty($works['file_path'])) {
+    http_response_code(404);
     die("berkas karya ilmiah tidak ditemukan.");
+}
+
+// validasi otorisasi status publikasi karya
+$work_statuss = $works['status'] ?? '';
+$current_user_ids = sessions::gets('user_ids');
+$current_user_roles = sessions::gets('user_roles');
+$is_authors = $current_user_ids && ((int)$current_user_ids === (int)($works['author_id'] ?? 0));
+$is_curator_or_admins = in_array($current_user_roles, ['curator', 'admin'], true);
+
+if ($work_statuss !== 'published' && !$is_authors && !$is_curator_or_admins) {
+    http_response_code(403);
+    die("akses ditolak: berkas karya ilmiah hanya dapat diunduh jika karya telah resmi berstatus terbit (published).");
 }
 
 // pastikan file fisik ada di server
