@@ -74,7 +74,12 @@ Berkas APK yang dihasilkan akan berada pada direktori:
 
 ---
 
-## 6. Catatan Terkait Platform iOS (Apple)
+## 6. Catatan Pengujian & Status Tooling Lingkungan
+
+> [!IMPORTANT]
+> **Status Audit Lingkungan Lokal**:  
+> Seluruh basis kode Flutter (`pubspec.yaml`, model data, `ApiService` dengan penanganan offline/timeout, widget state adaptif, serta layar antarmuka `home`, `search`, `detail`, `login`, dan `author_works`) telah selesai dibangun dan terstruktur rapi. Namun karena **Flutter SDK belum terpasang pada PATH sistem operasi komputer ini**, perintah analisis statis (`flutter analyze`) dan kompilasi emulator belum dijalankan secara langsung di workstation ini (sesuai aturan dosen: tidak mengarang hasil pengujian).
 
 > [!NOTE]
-> Pengujian dan kompilasi untuk platform iOS (iPhone/iPad) secara teknis memerlukan perangkat komputer berbasis **macOS** yang dilengkapi aplikasi **Xcode** serta sertifikat pengembang Apple. Karena pengujian pada tahapan ini dijalankan pada workstation Windows, aplikasi mobile native saat ini **belum diuji di lingkungan perangkat iOS nyata**. Basis kode Flutter dirancang multiplatform dan siap dikompilasi pada perangkat macOS di masa mendatang.
+> **Pengujian Platform iOS (Apple)**:  
+> Kompilasi dan pengujian untuk platform iOS memerlukan komputer berbasis **macOS** dengan **Xcode**. Karena workstation ini menggunakan sistem operasi Windows, aplikasi mobile native secara jujur **belum diuji di lingkungan iOS nyata**. Basis kode Flutter dirancang sepenuhnya multiplatform dan siap dikompilasi pada perangkat macOS.
