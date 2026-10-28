@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unggah Revisi Karya — LENTERAS</title>
+  <title>Unggah Revisi Karya — Lentera</title>
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="nav-wrappers">
       <a href="../../indexs.php" class="logo-links">
         <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
-        <div><span class="logo-texts">lenteras</span><span class="logo-subtexts">universitas madura</span></div>
+        <div><span class="logo-texts">Lentera</span><span class="logo-subtexts">universitas madura</span></div>
       </a>
       <a href="indexs.php" class="btn-logins" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">Kembali ke Dashboard</a>
     </div>

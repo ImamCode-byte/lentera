@@ -14,6 +14,41 @@ require_once dirname(__DIR__, 2) . '/backend/apps/helperss/validators.php';
 
 sessions::starts();
 
+// penanganan routing parameter ?urls= dari rewrite rule
+if (!empty($_GET['urls'])) {
+    $requested_urls = strtolower(trim($_GET['urls'], '/'));
+    $route_maps = [
+        'katalog'    => __DIR__ . '/viewss/searchs/indexs.php',
+        'cari'       => __DIR__ . '/viewss/searchs/indexs.php',
+        'jelajah'    => __DIR__ . '/viewss/searchs/indexs.php',
+        'search'     => __DIR__ . '/viewss/searchs/indexs.php',
+        'statistik'  => __DIR__ . '/viewss/statisticss/indexs.php',
+        'analytics'  => __DIR__ . '/viewss/statisticss/indexs.php',
+        'masuk'      => __DIR__ . '/viewss/auths/logins.php',
+        'login'      => __DIR__ . '/viewss/auths/logins.php',
+        'daftar'     => __DIR__ . '/viewss/auths/registers.php',
+        'register'   => __DIR__ . '/viewss/auths/registers.php',
+        'keluar'     => __DIR__ . '/viewss/auths/logouts.php',
+        'logout'     => __DIR__ . '/viewss/auths/logouts.php',
+        'karya'      => __DIR__ . '/viewss/workss/indexs.php',
+        'karya-saya' => __DIR__ . '/viewss/workss/indexs.php',
+        'unggah'     => __DIR__ . '/viewss/workss/creates.php',
+        'upload'     => __DIR__ . '/viewss/workss/creates.php',
+        'kurator'    => __DIR__ . '/viewss/reviews/indexs.php',
+        'admin'      => __DIR__ . '/viewss/admins/indexs.php',
+    ];
+
+    if ($requested_urls !== '' && $requested_urls !== 'indexs.php' && $requested_urls !== 'index.php') {
+        if (isset($route_maps[$requested_urls]) && file_exists($route_maps[$requested_urls])) {
+            require $route_maps[$requested_urls];
+            exit;
+        } else {
+            require __DIR__ . '/viewss/errorss/404s.php';
+            exit;
+        }
+    }
+}
+
 // inisialisasi variabel statistiks dan datas
 $total_workss = 0;
 $total_downloadss = 0;
@@ -78,7 +113,7 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LENTERAS — Repositori Karya Tulis Ilmiah Terpadu Akademik Universitas Madura</title>
+  <title>Lentera — Repositori Karya Tulis Ilmiah Terpadu Akademik Universitas Madura</title>
   <meta name="description" content="Repositori karya ilmiah digital terpusat Universitas Madura. Akses skripsi, tesis, jurnal, dan laporan penelitian terkurasi.">
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="csss/styles.css?vs=1.0.1">
@@ -92,7 +127,7 @@ try {
       <a href="indexs.php" class="logo-links">
         <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span class="logo-texts">lenteras</span>
+          <span class="logo-texts">Lentera</span>
           <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
@@ -354,7 +389,7 @@ try {
         <div class="logo-links" style="margin-bottom: 1rem;">
           <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
           <div>
-            <span class="logo-texts" style="color: #ffffff;">lenteras</span>
+            <span class="logo-texts" style="color: #ffffff;">Lentera</span>
             <span class="logo-subtexts">universitas madura</span>
           </div>
         </div>
@@ -394,7 +429,7 @@ try {
     </div>
 
     <div class="footer-bottoms">
-      &copy; 2026 LENTERAS Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
+      &copy; 2026 Lentera Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
     </div>
   </footer>
 

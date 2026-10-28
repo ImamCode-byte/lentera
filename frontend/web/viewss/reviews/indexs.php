@@ -323,7 +323,7 @@ $error_messages = flashs::gets('error');
           <i class="fa-solid fa-fire-flame-curved"></i>
         </div>
         <div>
-          <span style="font-size: 1.25rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">lentera</span>
+          <span style="font-size: 1.25rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</span>
           <span style="display: block; font-size: 0.68rem; font-weight: 700; color: var(--gold-accents); text-transform: uppercase;">universitas madura</span>
         </div>
       </a>

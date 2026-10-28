@@ -11,7 +11,7 @@ require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
 auth_controllers::logouts();
 
 sessions::starts();
-flashs::sets_success('anda telah berhasil keluar dari sistem lenteras.');
+flashs::sets_success('Anda telah berhasil keluar dari sistem Lentera.');
 
 header('Location: logins.php');
 exit;

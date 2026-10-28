@@ -34,7 +34,7 @@ $app_urls = get_configs('app_urls', 'http://localhost/lentera');
 $work_urls = "{$app_urls}/viewss/workss/details.php?ids={$works['id']}";
 
 // 1. APA 7th Edition
-$citation_apas = "{$author_names} ({$years}). {$titles}. [{$types}, {$faculties}, Universitas Madura]. Repositori LENTERAS. {$work_urls}";
+$citation_apas = "{$author_names} ({$years}). {$titles}. [{$types}, {$faculties}, Universitas Madura]. Repositori Lentera. {$work_urls}";
 
 // 2. IEEE
 $citation_ieees = "{$author_names}, \"{$titles},\" {$types}, {$prodis}, {$faculties}, Universitas Madura, Pamekasan, Indonesia, {$years}. [Online]. Tersedia: {$work_urls}";
@@ -51,7 +51,7 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= htmlspecialchars($works['title']); ?> — LENTERAS Universitas Madura</title>
+  <title><?= htmlspecialchars($works['title']); ?> — Lentera Universitas Madura</title>
   <meta name="description" content="<?= htmlspecialchars(mb_strimwidth($works['abstract'], 0, 160, '...')); ?>">
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
@@ -171,7 +171,7 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
       <a href="/lentera/indexs.php" class="logo-links">
         <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span class="logo-texts">lenteras</span>
+          <span class="logo-texts">Lentera</span>
           <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
@@ -419,7 +419,7 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
         <div class="logo-links" style="margin-bottom: 1rem;">
           <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
           <div>
-            <span class="logo-texts" style="color: #ffffff;">lenteras</span>
+            <span class="logo-texts" style="color: #ffffff;">Lentera</span>
             <span class="logo-subtexts">universitas madura</span>
           </div>
         </div>
@@ -449,7 +449,7 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
     </div>
 
     <div class="footer-bottoms">
-      &copy; 2026 LENTERAS Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
+      &copy; 2026 Lentera Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
     </div>
   </footer>
 

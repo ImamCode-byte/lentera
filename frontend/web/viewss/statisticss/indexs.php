@@ -68,7 +68,7 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Statistik & Akreditasi — LENTERAS</title>
+  <title>Dashboard Statistik & Akreditasi — Lentera</title>
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -86,7 +86,7 @@ try {
     <div class="nav-wrappers">
       <a href="../../indexs.php" class="logo-links">
         <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
-        <div><span class="logo-texts">lenteras</span><span class="logo-subtexts">analitik kampus</span></div>
+        <div><span class="logo-texts">Lentera</span><span class="logo-subtexts">analitik kampus</span></div>
       </a>
       <div style="display: flex; gap: 1rem; align-items: center;">
         <a href="../../indexs.php" class="nav-items-links">Beranda</a>

@@ -43,13 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Masuk ke Akun — LENTERAS Universitas Madura</title>
+  <title>Masuk ke Akun — Lentera Universitas Madura</title>
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .auth-containers {
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -164,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="auth-headers">
         <a href="../../indexs.php" style="text-decoration: none;">
           <div class="auth-logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
-          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">lenteras</h1>
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</h1>
           <p style="font-size: 0.8rem; color: var(--gold-accents); font-weight: 700; text-transform: uppercase;">universitas madura</p>
         </a>
         <h2 style="font-size: 1.25rem; font-weight: 700; margin-top: 1.25rem; color: var(--text-titles);">Masuk ke Akun</h2>

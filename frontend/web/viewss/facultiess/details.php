@@ -153,7 +153,7 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= htmlspecialchars($faculty_datas['name']); ?> — Repositori LENTERAS UNIRA</title>
+  <title><?= htmlspecialchars($faculty_datas['name']); ?> — Repositori Lentera UNIRA</title>
   <meta name="description" content="Etalase repositori karya ilmiah resmi <?= htmlspecialchars($faculty_datas['name']); ?> Universitas Madura. Akses skripsi, tesis, dan jurnal.">
   <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
   <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
@@ -442,7 +442,7 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
       <a href="/lentera/indexs.php" class="logo-links">
         <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span class="logo-texts">lenteras</span>
+          <span class="logo-texts">Lentera</span>
           <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
@@ -788,7 +788,7 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
         <div class="logo-links" style="margin-bottom: 1rem;">
           <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
           <div>
-            <span class="logo-texts" style="color: #ffffff;">lenteras</span>
+            <span class="logo-texts" style="color: #ffffff;">Lentera</span>
             <span class="logo-subtexts">universitas madura</span>
           </div>
         </div>
@@ -828,7 +828,7 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
     </div>
 
     <div class="footer-bottoms">
-      &copy; 2026 LENTERAS Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
+      &copy; 2026 Lentera Universitas Madura. Seluruh hak cipta dilindungi undang-undang.
     </div>
   </footer>
 
