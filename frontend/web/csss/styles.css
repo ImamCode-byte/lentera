@@ -566,6 +566,26 @@ body {
   font-size: 0.85rem;
 }
 
+/* responsivitas tabel & wadah data */
+.table-responsives {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+  border-radius: var(--radius-smalls);
+}
+
+/* touch targets minimum 44x44px untuk aksesibilitas & mobile */
+.btn-primarys,
+.btn-logins,
+.nav-mobile-toggles,
+.nav-items-links {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* responsive mobile queries */
 @media (max-width: 992px) {
   .hero-titles { font-size: 2.5rem; }
@@ -585,4 +605,21 @@ body {
   .stats-cards { border-right: none; border-bottom: 1px solid var(--border-colors); }
   .stats-cards:last-child { border-bottom: none; }
   .footer-wrappers { grid-template-columns: 1fr; }
+
+  /* cegah auto-zoom merusak tata letak di iOS Safari */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* cegah tombol meluber pada layar kecil */
+  .btn-primarys,
+  .btn-logins {
+    width: 100%;
+    text-align: center;
+  }
 }
