@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * logouts.php
  * endpoint keluar sesi pengguna lenteras

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * details.php
  * halaman detail karya ilmiah publik dengan pratinjau naskah, generator sitasi instan, lisensi, dan kata kunci interaktif

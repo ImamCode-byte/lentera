@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * payments.php
  * halaman pembayaran biaya publikasi (apc) dengan qr code dana dan auto-publish

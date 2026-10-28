@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * downloads.php
  * pengelola unduhan berkas naskah karya ilmiah secara aman disertai pencatatan audit log

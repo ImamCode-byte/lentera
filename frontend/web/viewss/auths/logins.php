@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * logins.php
  * halaman masuk (login) pengguna lenteras

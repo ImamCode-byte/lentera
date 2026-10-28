@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * dashboard statistik analitik dan laporan akreditasi lenteras

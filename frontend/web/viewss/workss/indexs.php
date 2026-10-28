@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * dashboard manajemen dan pemantauan status karya ilmiah penulis

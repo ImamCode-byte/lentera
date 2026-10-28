@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * entry point utama dan beranda etalase repositori lenteras

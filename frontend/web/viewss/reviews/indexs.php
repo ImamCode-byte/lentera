@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * dashboard kurasi karya ilmiah untuk kurator dan super admin

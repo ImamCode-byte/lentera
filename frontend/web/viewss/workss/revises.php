@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * revises.php
  * formulir unggah revisi dokumen karya ilmiah

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * panel super administrator repositori karya ilmiah lenteras universitas madura

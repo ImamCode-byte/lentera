@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * indexs.php
  * halaman pencarian dan penjelajahan katalog karya ilmiah terpublikasi

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * registers.php
  * halaman registrasi penulis dan civitas akademika repositori lenteras

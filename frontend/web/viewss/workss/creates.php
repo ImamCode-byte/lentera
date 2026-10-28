@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * creates.php
  * formulir unggah naskah karya ilmiah baru oleh penulis

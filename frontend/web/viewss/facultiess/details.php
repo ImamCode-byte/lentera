@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * details.php
  * halaman portal repositori khusus fakultas lenteras universitas madura
