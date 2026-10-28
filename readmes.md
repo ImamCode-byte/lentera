@@ -96,10 +96,10 @@ lentera/
    http://localhost/lentera/
    ```
 
-### akun default
-| peran | email | password |
-|-------|-------|----------|
-| super admin | admin@lentera.unira.ac.id | LenteraAdmin2026! |
+### akun pengujian & inisialisasi
+- **penulis**: silakan mendaftar secara mandiri melalui menu Registrasi (`/viewss/auths/registers.php`).
+- **super admin & kurator**: akun awal dibuat melalui file seeder atau didaftarkan via CLI/database lokal. Jangan menyimpan sandi baku/asli di dalam berkas repositori publik.
+- **publik**: dapat langsung mengakses seluruh katalog naskah yang berstatus terbit tanpa perlu login.
 
 ## 👥 lisensi & kepemilikan
 

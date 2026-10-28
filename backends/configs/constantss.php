@@ -15,6 +15,7 @@ define('status_drafts', 'draft');
 define('status_submitteds', 'submitted');
 define('status_in_reviews', 'in_review');
 define('status_revisions', 'revision');
+define('status_waiting_payments', 'waiting_payment');
 define('status_publisheds', 'published');
 define('status_rejecteds', 'rejected');
 
@@ -22,6 +23,8 @@ define('status_rejecteds', 'rejected');
 define('action_approves', 'approve');
 define('action_revisions', 'revision');
 define('action_rejects', 'reject');
+define('action_in_reviews', 'in_review');
+define('action_acc_payments', 'acc_payment');
 
 // batasan berkass (upload limits)
 define('max_upload_bytes_limits', 20971520); // 20 megabytes
