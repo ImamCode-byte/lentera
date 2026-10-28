@@ -1,8 +1,17 @@
-# ── Uploads (file PDF karya, avatar, temp) ──
-uploads/
-
 # ── Environment file ──
-backend/.env
+.env
+.env.*
+!.env.example
+
+# ── Dependencies ──
+node_modules/
+vendor/
+
+# ── Flutter / Dart ──
+.dart_tool/
+build/
+dist/
+coverage/
 
 # ── IDE & OS ──
 .idea/
@@ -12,11 +21,8 @@ backend/.env
 *~
 Thumbs.db
 .DS_Store
+~$*
 
 # ── Logs ──
 *.log
 logs/
-
-# ── Dependencies (jika ada) ──
-vendor/
-node_modules/

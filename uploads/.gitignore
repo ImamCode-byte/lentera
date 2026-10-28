@@ -1,0 +1,10 @@
+# Abaikan semua isi folder uploads (PDF karya, gambar pembayaran, dll.)
+*
+
+# Kecuali file konfigurasi server dan file placeholder ini
+!.gitignore
+!.htaccess
+!works/.gitkeep
+!works/.htaccess
+!payment/.gitkeep
+!payment/.htaccess
