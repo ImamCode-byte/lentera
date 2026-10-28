@@ -1,28 +1,30 @@
-# ── Environment file ──
+# ── Aturan Dasar Lingkungan & Build (Standar PBP) ──
 .env
 .env.*
 !.env.example
-
-# ── Dependencies ──
 node_modules/
-vendor/
-
-# ── Flutter / Dart ──
 .dart_tool/
 build/
 dist/
 coverage/
+.DS_Store
+Thumbs.db
+~$*
 
-# ── IDE & OS ──
+# ── OS & IDE Editor ──
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-Thumbs.db
-.DS_Store
-~$*
 
-# ── Logs ──
+# ── Dependencies Tambahan ──
+vendor/
+
+# ── Logs & Debug ──
 *.log
 logs/
+
+# ── Berkas Upload Dinamis ──
+# Seluruh file fisik yang diunggah pengguna tidak dimasukkan ke version control
+uploads/
