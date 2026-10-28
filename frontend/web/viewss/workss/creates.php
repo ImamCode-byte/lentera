@@ -1,17 +1,17 @@
-<?php
+﻿<?php
 /**
  * creates.php
  * formulir unggah naskah karya ilmiah baru oleh penulis
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/controllerss/work_controllers.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/modelss/work_typess.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/modelss/study_programss.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/sessions.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/flashs.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/csrfs.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/controllerss/work_controllers.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/modelss/work_typess.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/modelss/study_programss.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/csrfs.php';
 
 sessions::starts();
 

@@ -1,13 +1,13 @@
-<?php
+﻿<?php
 /**
  * details.php
  * halaman detail karya ilmiah publik dengan pratinjau naskah, generator sitasi instan, lisensi, dan kata kunci interaktif
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/modelss/workss.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/modelss/workss.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/sessions.php';
 
 sessions::starts();
 

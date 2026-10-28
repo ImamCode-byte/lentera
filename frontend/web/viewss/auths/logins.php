@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 /**
  * logins.php
  * halaman masuk (login) pengguna lenteras
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/controllerss/auth_controllers.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/flashs.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/csrfs.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/controllerss/auth_controllers.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/csrfs.php';
 
 sessions::starts();
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * details.php
  * halaman portal repositori khusus fakultas lenteras universitas madura
@@ -6,11 +6,11 @@
  * seluruh variabel dan fungsi menggunakan lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/configs/constantss.php';
-require_once dirname(__DIR__, 4) . '/backends/configs/databases.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/sessions.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/validators.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/constantss.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/databases.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/validators.php';
 
 sessions::starts();
 

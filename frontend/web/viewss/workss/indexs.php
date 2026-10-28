@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 /**
  * indexs.php
  * dashboard manajemen dan pemantauan status karya ilmiah penulis
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/modelss/workss.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/sessions.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/flashs.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/modelss/workss.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
 
 sessions::starts();
 

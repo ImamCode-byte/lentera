@@ -1,12 +1,12 @@
-<?php
+﻿<?php
 /**
  * logouts.php
  * endpoint keluar sesi pengguna lenteras
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/apps/controllerss/auth_controllers.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/flashs.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/controllerss/auth_controllers.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
 
 auth_controllers::logouts();
 

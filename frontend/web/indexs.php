@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * indexs.php
  * entry point utama dan beranda etalase repositori lenteras
@@ -6,11 +6,11 @@
  */
 
 // muat dependensis inti
-require_once dirname(__DIR__, 2) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 2) . '/backends/configs/constantss.php';
-require_once dirname(__DIR__, 2) . '/backends/configs/databases.php';
-require_once dirname(__DIR__, 2) . '/backends/apps/helperss/sessions.php';
-require_once dirname(__DIR__, 2) . '/backends/apps/helperss/validators.php';
+require_once dirname(__DIR__, 2) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 2) . '/backend/configs/constantss.php';
+require_once dirname(__DIR__, 2) . '/backend/configs/databases.php';
+require_once dirname(__DIR__, 2) . '/backend/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 2) . '/backend/apps/helperss/validators.php';
 
 sessions::starts();
 

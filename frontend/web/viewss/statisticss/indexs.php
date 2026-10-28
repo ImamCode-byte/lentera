@@ -1,13 +1,13 @@
-<?php
+﻿<?php
 /**
  * indexs.php
  * dashboard statistik analitik dan laporan akreditasi lenteras
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
-require_once dirname(__DIR__, 4) . '/backends/configs/apps.php';
-require_once dirname(__DIR__, 4) . '/backends/configs/databases.php';
-require_once dirname(__DIR__, 4) . '/backends/apps/helperss/sessions.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
+require_once dirname(__DIR__, 4) . '/backend/configs/databases.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/helperss/sessions.php';
 
 sessions::starts();
 
