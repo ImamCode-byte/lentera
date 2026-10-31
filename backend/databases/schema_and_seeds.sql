@@ -58,21 +58,28 @@ CREATE TABLE IF NOT EXISTS study_programs (
 -- 3. TABEL USERS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
-    id            INT AUTO_INCREMENT PRIMARY KEY,
-    name          VARCHAR(100) NOT NULL,
-    email         VARCHAR(150) NOT NULL,
-    password      VARCHAR(255) NOT NULL,
-    role          ENUM('author','curator','admin') NOT NULL DEFAULT 'author',
-    nim_nip       VARCHAR(30) NULL,
-    prodi_id      INT NULL,
-    avatar        VARCHAR(255) NULL,
-    bio           TEXT NULL,
-    is_active     BOOLEAN DEFAULT TRUE,
-    last_login_at TIMESTAMP NULL,
-    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id                    INT AUTO_INCREMENT PRIMARY KEY,
+    name                  VARCHAR(100) NOT NULL,
+    username              VARCHAR(60) NULL,
+    email                 VARCHAR(150) NOT NULL,
+    password              VARCHAR(255) NOT NULL,
+    role                  ENUM('author','curator','admin') NOT NULL DEFAULT 'author',
+    nim_nip               VARCHAR(30) NULL,
+    prodi_id              INT NULL,
+    affiliation           VARCHAR(150) NULL DEFAULT 'Universitas Madura',
+    country               VARCHAR(60) NULL DEFAULT 'Indonesia',
+    phone                 VARCHAR(30) NULL,
+    orcid_id              VARCHAR(50) NULL,
+    avatar                VARCHAR(255) NULL,
+    bio                   TEXT NULL,
+    is_reviewer_candidate BOOLEAN DEFAULT FALSE,
+    is_active             BOOLEAN DEFAULT TRUE,
+    last_login_at         TIMESTAMP NULL,
+    created_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     UNIQUE KEY uk_users_email (email),
+    UNIQUE KEY uk_users_username (username),
     INDEX idx_users_role (role),
     INDEX idx_users_prodi (prodi_id),
 
@@ -388,13 +395,13 @@ ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description);
 
 -- ── 4. Akun Pengguna Sivitas Akademika ──
 -- Catatan: Password untuk semua akun default di bawah adalah: password123
-INSERT INTO users (id, name, email, password, role, nim_nip, prodi_id, bio, is_active) VALUES
-(1, 'Super Admin LENTERA', 'admin@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'admin', '197508102001121001', 9, 'Pengelola Sistem Repositori Karya Ilmiah Universitas Madura', TRUE),
-(2, 'Dr. Ahmad Fauzi, M.Kom.', 'kurator@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'curator', '198203152008121003', 9, 'Dosen Informatika & Tim Kurator Naskah Akademik UNIRA', TRUE),
-(3, 'Moh. Imam Arifin', 'mahasiswa@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021510001', 9, 'Mahasiswa Program Studi Informatika Universitas Madura Angkatan 2021', TRUE),
-(4, 'Siti Nurhaliza', 'siti@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021520015', 2, 'Mahasiswi Program Studi Manajemen Fakultas Ekonomi dan Bisnis UNIRA', TRUE),
-(5, 'Budi Santoso', 'budi@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2020530022', 1, 'Mahasiswa Program Studi Hukum Fakultas Hukum Universitas Madura', TRUE)
-ON DUPLICATE KEY UPDATE name=VALUES(name), password=VALUES(password), role=VALUES(role), nim_nip=VALUES(nim_nip), prodi_id=VALUES(prodi_id);
+INSERT INTO users (id, name, username, email, password, role, nim_nip, prodi_id, bio, is_active) VALUES
+(1, 'Super Admin LENTERA', 'admin', 'admin@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'admin', '197508102001121001', 9, 'Pengelola Sistem Repositori Karya Ilmiah Universitas Madura', TRUE),
+(2, 'Dr. Ahmad Fauzi, M.Kom.', 'kurator', 'kurator@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'curator', '198203152008121003', 9, 'Dosen Informatika & Tim Kurator Naskah Akademik UNIRA', TRUE),
+(3, 'Moh. Imam Arifin', 'mahasiswa', 'mahasiswa@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021510001', 9, 'Mahasiswa Program Studi Informatika Universitas Madura Angkatan 2021', TRUE),
+(4, 'Siti Nurhaliza', 'siti', 'siti@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021520015', 2, 'Mahasiswi Program Studi Manajemen Fakultas Ekonomi dan Bisnis UNIRA', TRUE),
+(5, 'Budi Santoso', 'budi', 'budi@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2020530022', 1, 'Mahasiswa Program Studi Hukum Fakultas Hukum Universitas Madura', TRUE)
+ON DUPLICATE KEY UPDATE name=VALUES(name), username=VALUES(username), password=VALUES(password), role=VALUES(role), nim_nip=VALUES(nim_nip), prodi_id=VALUES(prodi_id);
 
 -- ── 5. Data Karya Ilmiah Realistis UNIRA ──
 INSERT INTO works (id, title, abstract, author_id, prodi_id, work_type_id, status, year, supervisor, view_count, download_count, submitted_at, published_at) VALUES
