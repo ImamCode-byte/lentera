@@ -14,7 +14,7 @@ class databases {
         $env_files = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
         $db_hosts = '127.0.0.1';
         $db_ports = '3306';
-        $db_names = 'lentera_db';
+        $db_names = 'db_lentera';
         $db_users = 'root';
         $db_passs = '';
 

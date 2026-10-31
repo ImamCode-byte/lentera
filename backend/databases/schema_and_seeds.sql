@@ -1,18 +1,19 @@
 -- ============================================================
--- 🔥 LENTERA — Master Schema & Seed SQL
+-- 🔥 LENTERA — Master Schema & Seed SQL (db_lentera)
 -- Laman Etalase Karya Tulis Ilmiah Terpadu Akademik
 -- Universitas Madura (UNIRA)
 -- 
 -- Petunjuk:
--- 1. Buat database: CREATE DATABASE IF NOT EXISTS lentera_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- 2. Import file ini langsung ke lentera_db via phpMyAdmin atau CLI.
+-- 1. Buat database: CREATE DATABASE IF NOT EXISTS db_lentera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- 2. Import file ini langsung ke db_lentera via phpMyAdmin atau CLI:
+--    mysql -u root -p db_lentera < schema_and_seeds.sql
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS lentera_db
+CREATE DATABASE IF NOT EXISTS db_lentera
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE lentera_db;
+USE db_lentera;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -104,7 +105,7 @@ CREATE TABLE IF NOT EXISTS works (
     author_id      INT NOT NULL,
     prodi_id       INT NOT NULL,
     work_type_id   INT NOT NULL,
-    status         ENUM('draft','submitted','in_review','revision','published','rejected')
+    status         ENUM('draft','submitted','in_review','revision','waiting_payment','published','rejected')
                        NOT NULL DEFAULT 'draft',
     year           SMALLINT NOT NULL,
     supervisor     VARCHAR(200) NULL,
@@ -143,9 +144,9 @@ CREATE TABLE IF NOT EXISTS works (
 -- 6. TABEL WORK_KEYWORDS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS work_keywords (
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    work_id  INT NOT NULL,
-    keyword  VARCHAR(100) NOT NULL,
+    id      INT AUTO_INCREMENT PRIMARY KEY,
+    work_id INT NOT NULL,
+    keyword VARCHAR(50) NOT NULL,
 
     INDEX idx_keywords_work (work_id),
     INDEX idx_keywords_keyword (keyword),
@@ -165,13 +166,13 @@ CREATE TABLE IF NOT EXISTS work_files (
     original_name VARCHAR(255) NOT NULL,
     stored_name   VARCHAR(255) NOT NULL,
     file_path     VARCHAR(500) NOT NULL,
-    file_size     BIGINT UNSIGNED NOT NULL,
-    version       INT NOT NULL DEFAULT 1,
+    file_size     INT UNSIGNED NOT NULL,
+    mime_type     VARCHAR(100) DEFAULT 'application/pdf',
+    version       INT DEFAULT 1,
     is_current    BOOLEAN DEFAULT TRUE,
     uploaded_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     INDEX idx_files_work (work_id),
-    INDEX idx_files_current (work_id, is_current),
 
     CONSTRAINT fk_files_work
         FOREIGN KEY (work_id) REFERENCES works(id)
@@ -186,7 +187,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     work_id    INT NOT NULL,
     curator_id INT NOT NULL,
-    action     ENUM('approve','revision','reject') NOT NULL,
+    action     ENUM('approve','revision','reject','in_review','acc_payment') NOT NULL,
     comment    TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -205,7 +206,41 @@ CREATE TABLE IF NOT EXISTS reviews (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ────────────────────────────────────────────────────────────
--- 9. TABEL DOWNLOAD_LOGS
+-- 9. TABEL PAYMENTSS (Biaya Publikasi / APC)
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS paymentss (
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    work_id             INT NOT NULL,
+    user_id             INT NOT NULL,
+    invoice_number      VARCHAR(50) NOT NULL,
+    amount              DECIMAL(12,2) NOT NULL DEFAULT 150000.00,
+    payment_method      VARCHAR(50) DEFAULT 'QRIS Dhes Mart / DANA',
+    destination_account VARCHAR(100) DEFAULT '087849264452 an. Imam (Dhes Mart)',
+    sender_name         VARCHAR(100) NULL,
+    reference_number    VARCHAR(100) NULL,
+    proof_file          VARCHAR(255) NULL,
+    status              ENUM('pending','completed','rejected') NOT NULL DEFAULT 'pending',
+    paid_at             TIMESTAMP NULL,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uk_paymentss_invoice (invoice_number),
+    INDEX idx_paymentss_work (work_id),
+    INDEX idx_paymentss_user (user_id),
+
+    CONSTRAINT fk_paymentss_work
+        FOREIGN KEY (work_id) REFERENCES works(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_paymentss_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ────────────────────────────────────────────────────────────
+-- 10. TABEL DOWNLOAD_LOGS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS download_logs (
     id            INT AUTO_INCREMENT PRIMARY KEY,
@@ -230,7 +265,7 @@ CREATE TABLE IF NOT EXISTS download_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ────────────────────────────────────────────────────────────
--- 10. TABEL NOTIFICATIONS
+-- 11. TABEL NOTIFICATIONS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS notifications (
     id         INT AUTO_INCREMENT PRIMARY KEY,
@@ -251,7 +286,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ────────────────────────────────────────────────────────────
--- 11. TABEL PASSWORD_RESETS
+-- 12. TABEL PASSWORD_RESETS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS password_resets (
     id         INT AUTO_INCREMENT PRIMARY KEY,
@@ -271,7 +306,7 @@ CREATE TABLE IF NOT EXISTS password_resets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ────────────────────────────────────────────────────────────
--- 12. TABEL ACTIVITY_LOGS
+-- 13. TABEL ACTIVITY_LOGS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS activity_logs (
     id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -294,7 +329,7 @@ CREATE TABLE IF NOT EXISTS activity_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ────────────────────────────────────────────────────────────
--- 13. TABEL SETTINGS
+-- 14. TABEL SETTINGS
 -- ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS settings (
     id            INT AUTO_INCREMENT PRIMARY KEY,
@@ -309,60 +344,149 @@ CREATE TABLE IF NOT EXISTS settings (
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================================
--- 📦 SEEDER DATA AWAL
+-- 📦 SEEDER DATA AWAL UNIVERSITAS MADURA (UNIRA)
 -- ============================================================
 
 -- ── 1. Fakultas UNIRA ──
-INSERT INTO faculties (code, name, sort_order) VALUES
-('FH',   'Fakultas Hukum',                                1),
-('FEB',  'Fakultas Ekonomi dan Bisnis',                    2),
-('FIA',  'Fakultas Ilmu Administrasi',                     3),
-('FP',   'Fakultas Pertanian',                             4),
-('FT',   'Fakultas Teknik',                                5),
-('FKIP', 'Fakultas Keguruan dan Ilmu Pendidikan',          6),
-('PPS',  'Program Pascasarjana',                           7)
+INSERT INTO faculties (id, code, name, sort_order) VALUES
+(1, 'FH',   'Fakultas Hukum',                                1),
+(2, 'FEB',  'Fakultas Ekonomi dan Bisnis',                    2),
+(3, 'FIA',  'Fakultas Ilmu Administrasi',                     3),
+(4, 'FP',   'Fakultas Pertanian',                             4),
+(5, 'FT',   'Fakultas Teknik',                                5),
+(6, 'FKIP', 'Fakultas Keguruan dan Ilmu Pendidikan',          6),
+(7, 'PPS',  'Program Pascasarjana',                           7)
 ON DUPLICATE KEY UPDATE name=VALUES(name), sort_order=VALUES(sort_order);
 
 -- ── 2. Program Studi UNIRA ──
-INSERT INTO study_programs (code, name, degree, faculty_id) VALUES
-('FH-HKM',   'Hukum',                       'S1', (SELECT id FROM faculties WHERE code='FH')),
-('FEB-MNJ',  'Manajemen',                   'S1', (SELECT id FROM faculties WHERE code='FEB')),
-('FEB-AKT',  'Akuntansi',                   'S1', (SELECT id FROM faculties WHERE code='FEB')),
-('FEB-BDG',  'Bisnis Digital',              'S1', (SELECT id FROM faculties WHERE code='FEB')),
-('FIA-ADP',  'Administrasi Publik',         'S1', (SELECT id FROM faculties WHERE code='FIA')),
-('FP-PTK',   'Peternakan',                  'S1', (SELECT id FROM faculties WHERE code='FP')),
-('FP-AGB',   'Agribisnis',                  'S1', (SELECT id FROM faculties WHERE code='FP')),
-('FT-TSP',   'Teknik Sipil',               'S1', (SELECT id FROM faculties WHERE code='FT')),
-('FT-INF',   'Informatika',                'S1', (SELECT id FROM faculties WHERE code='FT')),
-('FT-TIN',   'Teknik Industri',            'S1', (SELECT id FROM faculties WHERE code='FT')),
-('FKIP-PBI', 'Pendidikan Bahasa Indonesia', 'S1', (SELECT id FROM faculties WHERE code='FKIP')),
-('FKIP-PMT', 'Pendidikan Matematika',      'S1', (SELECT id FROM faculties WHERE code='FKIP')),
-('FKIP-PBG', 'Pendidikan Bahasa Inggris',  'S1', (SELECT id FROM faculties WHERE code='FKIP')),
-('PPS-HKM',  'Hukum',                      'S2', (SELECT id FROM faculties WHERE code='PPS')),
-('PPS-MNJ',  'Manajemen',                  'S2', (SELECT id FROM faculties WHERE code='PPS'))
+INSERT INTO study_programs (id, code, name, degree, faculty_id) VALUES
+(1,  'FH-HKM',   'Hukum',                       'S1', 1),
+(2,  'FEB-MNJ',  'Manajemen',                   'S1', 2),
+(3,  'FEB-AKT',  'Akuntansi',                   'S1', 2),
+(4,  'FEB-BDG',  'Bisnis Digital',              'S1', 2),
+(5,  'FIA-ADP',  'Administrasi Publik',         'S1', 3),
+(6,  'FP-PTK',   'Peternakan',                  'S1', 4),
+(7,  'FP-AGB',   'Agribisnis',                  'S1', 4),
+(8,  'FT-TSP',   'Teknik Sipil',               'S1', 5),
+(9,  'FT-INF',   'Informatika',                'S1', 5),
+(10, 'FT-TIN',   'Teknik Industri',            'S1', 5),
+(11, 'FKIP-PBI', 'Pendidikan Bahasa Indonesia', 'S1', 6),
+(12, 'FKIP-PMT', 'Pendidikan Matematika',      'S1', 6),
+(13, 'FKIP-PBG', 'Pendidikan Bahasa Inggris',  'S1', 6),
+(14, 'PPS-HKM',  'Magister Hukum',             'S2', 7),
+(15, 'PPS-MNJ',  'Magister Manajemen',         'S2', 7)
 ON DUPLICATE KEY UPDATE name=VALUES(name), degree=VALUES(degree), faculty_id=VALUES(faculty_id);
 
 -- ── 3. Tipe Karya Ilmiah ──
-INSERT INTO work_types (code, name, description) VALUES
-('SKR', 'Skripsi',               'Tugas akhir jenjang sarjana (S1)'),
-('TES', 'Tesis',                 'Tugas akhir jenjang magister (S2)'),
-('JRN', 'Jurnal Ilmiah',         'Artikel ilmiah yang dipublikasikan di jurnal atau prosiding'),
-('LPK', 'Laporan Kerja Praktik', 'Laporan kegiatan kerja praktik atau magang industri'),
-('LPN', 'Laporan Penelitian',    'Laporan hasil penelitian mandiri atau hibah dosen dan mahasiswa')
+INSERT INTO work_types (id, code, name, description) VALUES
+(1, 'SKR', 'Skripsi',               'Tugas akhir jenjang sarjana (S1)'),
+(2, 'TES', 'Tesis',                 'Tugas akhir jenjang magister (S2)'),
+(3, 'JRN', 'Jurnal Ilmiah',         'Artikel ilmiah yang dipublikasikan di jurnal atau prosiding'),
+(4, 'LPK', 'Laporan Kerja Praktik', 'Laporan kegiatan kerja praktik atau magang industri'),
+(5, 'LPN', 'Laporan Penelitian',    'Laporan hasil penelitian mandiri atau hibah dosen dan mahasiswa')
 ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description);
 
--- ── 4. Akun Super Admin Default ──
-INSERT INTO users (name, email, password, role, is_active) VALUES
-(
-    'Super Admin LENTERA',
-    'admin@lentera.unira.ac.id',
-    '$2y$12$4L64g0d2j5HkU7bK0P2XqO6uWvR8bF9wB3nQ4mE7yZ1cT5aV0gK2e',
-    'admin',
-    TRUE
-)
-ON DUPLICATE KEY UPDATE name=VALUES(name), role=VALUES(role), is_active=VALUES(is_active);
+-- ── 4. Akun Pengguna Sivitas Akademika ──
+-- Catatan: Password untuk semua akun default di bawah adalah: password123
+INSERT INTO users (id, name, email, password, role, nim_nip, prodi_id, bio, is_active) VALUES
+(1, 'Super Admin LENTERA', 'admin@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'admin', '197508102001121001', 9, 'Pengelola Sistem Repositori Karya Ilmiah Universitas Madura', TRUE),
+(2, 'Dr. Ahmad Fauzi, M.Kom.', 'kurator@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'curator', '198203152008121003', 9, 'Dosen Informatika & Tim Kurator Naskah Akademik UNIRA', TRUE),
+(3, 'Moh. Imam Arifin', 'mahasiswa@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021510001', 9, 'Mahasiswa Program Studi Informatika Universitas Madura Angkatan 2021', TRUE),
+(4, 'Siti Nurhaliza', 'siti@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2021520015', 2, 'Mahasiswi Program Studi Manajemen Fakultas Ekonomi dan Bisnis UNIRA', TRUE),
+(5, 'Budi Santoso', 'budi@lentera.unira.ac.id', '$2y$10$zQybDVrmwk87gWxpQ7W9E.s91zDTvETPMb/shlyhENP/psEz02U9i', 'author', '2020530022', 1, 'Mahasiswa Program Studi Hukum Fakultas Hukum Universitas Madura', TRUE)
+ON DUPLICATE KEY UPDATE name=VALUES(name), password=VALUES(password), role=VALUES(role), nim_nip=VALUES(nim_nip), prodi_id=VALUES(prodi_id);
 
--- ── 5. Pengaturan Sistem Awal ──
+-- ── 5. Data Karya Ilmiah Realistis UNIRA ──
+INSERT INTO works (id, title, abstract, author_id, prodi_id, work_type_id, status, year, supervisor, view_count, download_count, submitted_at, published_at) VALUES
+(
+    1,
+    'Sistem Informasi Repositori Karya Ilmiah Terpadu Berbasis Web Menggunakan Arsitektur MVC pada Universitas Madura',
+    'Penelitian ini mengembangkan repositori karya ilmiah terpadu (LENTERA) untuk mengelola publikasi skripsi, tesis, dan artikel ilmiah di lingkungan Universitas Madura. Sistem dibangun menggunakan arsitektur Model-View-Controller (MVC) dengan bahasa pemrograman PHP dan basis data MySQL. Hasil pengujian menunjukkan efisiensi proses kurasi meningkat sebesar 65% dan akses publik terhadap naskah akademik menjadi lebih cepat, transparan, dan terstruktur.',
+    3, 9, 1, 'published', 2024, 'Dr. Ahmad Fauzi, M.Kom.',
+    148, 52, '2024-07-15 08:30:00', '2024-08-20 10:00:00'
+),
+(
+    2,
+    'Analisis Pengaruh Digital Marketing dan Citra Merek Terhadap Keputusan Pembelian Batik Tulis Madura',
+    'Penelitian ini bertujuan untuk menganalisis pengaruh strategi pemasaran digital dan kekuatan merek terhadap keputusan konsumen dalam membeli produk batik tulis khas Madura di Kabupaten Pamekasan. Metode kuantitatif diterapkan melalui kuesioner kepada 120 responden konsumen sentra industri batik Klampar. Hasil analisis regresi linier berganda mengindikasikan bahwa digital marketing dan citra merek berpengaruh signifikan dan simultan terhadap keputusan pembelian.',
+    4, 2, 1, 'published', 2024, 'Dr. Hj. Nurul Hidayati, S.E., M.M.',
+    95, 31, '2024-08-01 09:15:00', '2024-09-05 14:30:00'
+),
+(
+    3,
+    'Implementasi Algoritma C4.5 untuk Klasifikasi Kelayakan Penerima Bantuan Pangan di Kabupaten Pamekasan',
+    'Penyaluran bantuan sosial seringkali menghadapi kendala ketepatan sasaran. Penelitian ini menerapkan algoritma data mining C4.5 (decision tree) untuk mengklasifikasikan rumah tangga penerima bantuan pangan non tunai berdasarkan parameter penghasilan, kondisi tempat tinggal, tanggungan keluarga, dan daya listrik. Model pohon keputusan mencapai akurasi sebesar 89.2% pada pengujian validasi 10-fold cross validation.',
+    3, 9, 1, 'waiting_payment', 2024, 'Dr. Ahmad Fauzi, M.Kom.',
+    42, 0, '2024-10-10 11:20:00', NULL
+),
+(
+    4,
+    'Perlindungan Hukum terhadap Hak Cipta Motif Batik Tradisional Pamekasan Berdasarkan Undang-Undang Nomor 28 Tahun 2014',
+    'Batik tulis Pamekasan memiliki keanekaragaman motif tradisional yang bernilai tinggi namun rawan terjadi plagiasi oleh industri luar daerah. Skripsi ini mengkaji bentuk kepastian hukum dan efektivitas penerapan Undang-Undang Nomor 28 Tahun 2014 tentang Hak Cipta bagi para pengrajin batik skala mikro di Madura serta peran pemerintah daerah dalam fasilitasi pendaftaran indikasi geografis dan perlindungan kekayaan intelektual komunal.',
+    5, 1, 1, 'in_review', 2024, 'Prof. Dr. H. Faisal Rahman, S.H., M.Hum.',
+    23, 0, '2024-10-18 13:45:00', NULL
+),
+(
+    5,
+    'Rancang Bangun Aplikasi Monitoring Hasil Panen Tembakau Madura Berbasis Mobile Flutter',
+    'Pertanian tembakau merupakan komoditas perkebunan unggulan di Pulau Madura. Aplikasi mobile berbasis Flutter dirancang guna memfasilitasi petani dalam mencatat estimasi tonase, kalender tanam, biaya operasional, dan pemantauan harga pasar gudang secara waktu nyata. Sistem terintegrasi dengan REST API backend PHP untuk sinkronisasi data lintas perangkat smartphone Android dan iOS.',
+    3, 9, 1, 'revision', 2024, 'Dr. Ahmad Fauzi, M.Kom.',
+    35, 0, '2024-10-05 10:00:00', NULL
+)
+ON DUPLICATE KEY UPDATE title=VALUES(title), abstract=VALUES(abstract), status=VALUES(status);
+
+-- ── 6. Kata Kunci Karya Ilmiah ──
+INSERT INTO work_keywords (work_id, keyword) VALUES
+(1, 'Repositori Digital'),
+(1, 'Karya Ilmiah'),
+(1, 'Model View Controller'),
+(1, 'Universitas Madura'),
+(1, 'Informatika'),
+(2, 'Digital Marketing'),
+(2, 'Citra Merek'),
+(2, 'Batik Tulis Madura'),
+(2, 'Pamekasan'),
+(2, 'Keputusan Pembelian'),
+(3, 'Algoritma C4.5'),
+(3, 'Data Mining'),
+(3, 'Klasifikasi'),
+(3, 'Bantuan Sosial Pangan'),
+(3, 'Pamekasan'),
+(4, 'Hak Cipta'),
+(4, 'Perlindungan Hukum'),
+(4, 'Batik Tradisional'),
+(4, 'Kekayaan Intelektual'),
+(4, 'UU Hak Cipta'),
+(5, 'Flutter Mobile'),
+(5, 'Monitoring Pertanian'),
+(5, 'Tembakau Madura'),
+(5, 'REST API'),
+(5, 'Android dan iOS');
+
+-- ── 7. Berkas Naskah PDF ──
+INSERT INTO work_files (id, work_id, original_name, stored_name, file_path, file_size, mime_type, version, is_current) VALUES
+(1, 1, 'Skripsi_Informatika_Moh_Imam_Arifin_2024.pdf', '20b59e727f7dbff0cad2f377f281b6e0.pdf', 'uploads/works/20b59e727f7dbff0cad2f377f281b6e0.pdf', 18750, 'application/pdf', 1, TRUE),
+(2, 2, 'Skripsi_Manajemen_Siti_Nurhaliza_2024.pdf', '20b59e727f7dbff0cad2f377f281b6e0.pdf', 'uploads/works/20b59e727f7dbff0cad2f377f281b6e0.pdf', 18750, 'application/pdf', 1, TRUE),
+(3, 3, 'Draf_Skripsi_C45_Bantuan_Pangan_2024.pdf', '20b59e727f7dbff0cad2f377f281b6e0.pdf', 'uploads/works/20b59e727f7dbff0cad2f377f281b6e0.pdf', 18750, 'application/pdf', 1, TRUE),
+(4, 4, 'Draf_Skripsi_Hukum_Batik_Budi_2024.pdf', '20b59e727f7dbff0cad2f377f281b6e0.pdf', 'uploads/works/20b59e727f7dbff0cad2f377f281b6e0.pdf', 18750, 'application/pdf', 1, TRUE),
+(5, 5, 'Draf_Skripsi_Flutter_Tembakau_v1.pdf', '20b59e727f7dbff0cad2f377f281b6e0.pdf', 'uploads/works/20b59e727f7dbff0cad2f377f281b6e0.pdf', 18750, 'application/pdf', 1, TRUE)
+ON DUPLICATE KEY UPDATE original_name=VALUES(original_name);
+
+-- ── 8. Catatan Telaah Kurator ──
+INSERT INTO reviews (id, work_id, curator_id, action, comment, created_at) VALUES
+(1, 1, 2, 'approve', 'Naskah telah memenuhi kaidah penulisan akademik dan implementasi sistem telah terverifikasi dengan sangat baik. Naskah disetujui untuk diterbitkan di etalase repositori publik LENTERA.', '2024-08-20 09:45:00'),
+(2, 2, 2, 'approve', 'Analisis data statistik regresi linier berganda telah valid dan pembahasan selaras dengan temuan di lapangan sentra batik Klampar. Disetujui terbit.', '2024-09-05 14:15:00'),
+(3, 3, 2, 'acc_payment', 'Naskah dinyatakan lolos kurasi substansi akademik. Silakan selesaikan administrasi publikasi (Article Processing Charge) melalui QRIS institusi sebelum naskah diterbitkan.', '2024-10-12 10:00:00'),
+(4, 4, 2, 'in_review', 'Naskah sedang dalam antrean telaah orisinalitas dan kesesuaian format perundang-undangan.', '2024-10-18 14:00:00'),
+(5, 5, 2, 'revision', 'Perlu dilakukan perbaikan diagram relasi entitas pada Bab III serta penambahan pengujian fungsional pada modul geolokasi perkebunan tembakau sebelum disetujui.', '2024-10-08 15:30:00')
+ON DUPLICATE KEY UPDATE comment=VALUES(comment);
+
+-- ── 9. Transaksi Pembayaran Publikasi (Article Processing Charge) ──
+INSERT INTO paymentss (id, work_id, user_id, invoice_number, amount, payment_method, destination_account, status, created_at) VALUES
+(1, 3, 3, 'INV-LTR-20241012-0003', 150000.00, 'QRIS Dhes Mart / DANA', '087849264452 an. Imam (Dhes Mart)', 'pending', '2024-10-12 10:05:00')
+ON DUPLICATE KEY UPDATE amount=VALUES(amount);
+
+-- ── 10. Pengaturan Sistem Awal ──
 INSERT INTO settings (setting_key, setting_value, setting_group) VALUES
 ('site_name',          'LENTERA',                                 'general'),
 ('site_tagline',       'Menerangi Karya, Menginspirasi Generasi', 'general'),

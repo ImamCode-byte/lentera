@@ -189,8 +189,10 @@ class workss {
         }
 
         if (!empty($keyword_filters)) {
-            $querys .= " AND (w.title LIKE :kw OR u.name LIKE :kw OR u.nim_nip LIKE :kw)";
-            $params[':kw'] = '%' . $keyword_filters . '%';
+            $querys .= " AND (w.title LIKE :kw1 OR u.name LIKE :kw2 OR u.nim_nip LIKE :kw3)";
+            $params[':kw1'] = '%' . $keyword_filters . '%';
+            $params[':kw2'] = '%' . $keyword_filters . '%';
+            $params[':kw3'] = '%' . $keyword_filters . '%';
         }
 
         if (!empty($prodi_filters)) {
@@ -279,8 +281,11 @@ class workss {
         $params = [];
 
         if (!empty($query_texts)) {
-            $querys .= " AND (w.title LIKE :querys OR w.abstract LIKE :querys OR u.name LIKE :querys OR w.id IN (SELECT work_id FROM work_keywords WHERE keyword LIKE :querys))";
-            $params[':querys'] = '%' . $query_texts . '%';
+            $querys .= " AND (w.title LIKE :query1 OR w.abstract LIKE :query2 OR u.name LIKE :query3 OR w.id IN (SELECT work_id FROM work_keywords WHERE keyword LIKE :query4))";
+            $params[':query1'] = '%' . $query_texts . '%';
+            $params[':query2'] = '%' . $query_texts . '%';
+            $params[':query3'] = '%' . $query_texts . '%';
+            $params[':query4'] = '%' . $query_texts . '%';
         }
 
         if (!empty($type_filters)) {
