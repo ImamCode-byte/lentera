@@ -48,11 +48,11 @@ backend/
 
 3. **Inisialisasi Database**:
    - Pastikan service MySQL XAMPP telah menyala.
-   - Sistem akan otomatis mendeteksi ketiadaan basis data `lentera_db` dan membuat skema beserta seeder awal melalui mekanisme *auto-healing*.
+   - Sistem akan otomatis mendeteksi ketiadaan basis data `db_lentera` dan membuat skema beserta seeder awal melalui mekanisme *auto-healing*.
    - Untuk menjalankan migrasi secara manual:
      ```bash
-     mysql -u root -p lentera_db < databases/schema_and_seeds.sql
-     mysql -u root -p lentera_db < databases/migrationss/014_add_waiting_payment_enum.sql
+     mysql -u root -p db_lentera < databases/schema_and_seeds.sql
+     mysql -u root -p db_lentera < databases/migrationss/014_add_waiting_payment_enum.sql
      ```
 
 ---

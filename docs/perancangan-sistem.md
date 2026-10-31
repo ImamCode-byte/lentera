@@ -248,7 +248,7 @@ Setiap use case merepresentasikan user story yang telah disusun di atas, dikelom
 ### A. Product Backlog (PBI)
 | ID | Deskripsi Fitur / Kebutuhan | Points | Sprint | Status | Kriteria Selesai (Definition of Done) |
 |:--:|---|:---:|:---:|:---:|---|
-| **PBI-01** | Fondasi Arsitektur MVC, Database PDO Prepared Statements & Auto-Healing | 8 | S1 | Selesai | Basis data `lentera_db` terinisialisasi otomatis tanpa SQL injection. |
+| **PBI-01** | Fondasi Arsitektur MVC, Database PDO Prepared Statements & Auto-Healing | 8 | S1 | Selesai | Basis data `db_lentera` terinisialisasi otomatis tanpa SQL injection. |
 | **PBI-02** | Pengamanan Repositori (.gitignore, .htaccess uploads, sanitasi kredensial) | 5 | S1 | Selesai | Berkas uploads terproteksi deny all; kredensial tidak bocor di git. |
 | **PBI-03** | Modul Autentikasi Pengguna & Registrasi Mandiri Mahasiswa | 5 | S1 | Selesai | Registrasi validasi NIM/email, hash password bcrypt, sesi secure. |
 | **PBI-04** | Modul Pengajuan Naskah & Pengunggahan Berkas PDF Penulis | 8 | S2 | Selesai | Form upload memvalidasi PDF $\le$ 20MB, status naskah `submitted`. |

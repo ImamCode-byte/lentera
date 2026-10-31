@@ -112,13 +112,13 @@ pemrograman-berbasis-platform-kelompok-01-lentera/
      ```env
      DB_HOST=127.0.0.1
      DB_PORT=3306
-     DB_NAME=lentera_db
+     DB_NAME=db_lentera
      DB_USER=root
      DB_PASS=
      ```
 3. Inisialisasi Basis Data:
    - Nyalakan modul **Apache** dan **MySQL** di XAMPP Control Panel.
-   - Sistem dilengkapi mekanisme *Auto-Healing*: saat halaman web dibuka pertama kali, basis data `lentera_db` dan seluruh tabelnya akan diinisialisasi secara otomatis.
+   - Sistem dilengkapi mekanisme *Auto-Healing*: saat halaman web dibuka pertama kali, basis data `db_lentera` dan seluruh tabelnya akan diinisialisasi secara otomatis.
    - Alternatif: jalankan migrasi berkas SQL dari direktori `backend/databases/schema_and_seeds.sql`.
 4. Buka aplikasi di peramban:
    ```
