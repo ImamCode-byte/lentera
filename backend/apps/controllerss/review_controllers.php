@@ -69,7 +69,7 @@ class review_controllers {
         $this->work_models->updates_statuss($work_ids, $new_statuss);
 
         $action_labels = [
-            'acc_payment' => 'Naskah ilmiah berhasil di-ACC kelayakannya! Status dialihkan ke Menunggu Pembayaran agar penulis dapat melunasi APC via DANA/QRIS sebelum auto-publish.',
+            'acc_payment' => 'Naskah ilmiah berhasil di-ACC kelayakannya! Status dialihkan ke Menunggu Pembayaran APC. Penulis dapat melunasi biaya dan mengirim bukti transfer untuk diverifikasi Admin Repositori.',
             'approve'     => 'Naskah ilmiah berhasil disetujui dan resmi diterbitkan ke repositori publik!',
             'in_review'   => 'Status naskah berhasil dialihkan ke tahap Penelaahan Kurator (In Review).',
             'revision'    => 'Catatan revisi berhasil dikirim ke penulis. Status naskah berubah menjadi Menunggu Revisi.',

@@ -144,6 +144,9 @@ $error_messages = flashs::gets('error');
         <?php if (in_array($user_roles, ['curator', 'admin'])): ?>
           <a href="../reviews/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">Antrean Kurator</a>
         <?php endif; ?>
+        <?php if ($user_roles === 'admin'): ?>
+          <a href="../admins/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.9rem; font-size: 0.82rem; background: #831843;">Panel Admin</a>
+        <?php endif; ?>
         <a href="../../indexs.php" class="nav-items-links">Beranda</a>
         <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">Keluar</a>
       </div>
@@ -154,7 +157,7 @@ $error_messages = flashs::gets('error');
     <div class="dashboard-headers">
       <div>
         <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-titles); letter-spacing: -0.5px;">Dashboard Karya Saya</h1>
-        <p style="color: var(--text-bodys); font-size: 0.92rem;">Kelola naskah ilmiah, pantau alur verifikasi kurator, dan unggah revisi.</p>
+        <p style="color: var(--text-bodys); font-size: 0.92rem;">Kelola naskah ilmiah, pantau alur verifikasi kurator, biaya publikasi, dan unggah revisi.</p>
       </div>
       <a href="creates.php" class="btn-primarys btn-golds" style="padding: 0.75rem 1.4rem;">
         <i class="fa-solid fa-plus"></i> Unggah Karya Baru
@@ -190,7 +193,7 @@ $error_messages = flashs::gets('error');
             <tr>
               <th>Judul Naskah</th>
               <th>Jenis & Prodi</th>
-              <th>Status Kurasi</th>
+              <th>Status Kurasi & Publikasi</th>
               <th>Versi Dokumen</th>
               <th>Statistik</th>
               <th>Aksi</th>
@@ -206,9 +209,16 @@ $error_messages = flashs::gets('error');
                 <span style="font-size: 0.78rem; color: var(--text-mutes); margin-top: 0.35rem; display: block;">
                   Diajukan: <?= date('d M Y, H:i', strtotime($works['created_at'])); ?> WIB
                 </span>
+
                 <?php if (!empty($works['last_review_comments']) && in_array($works['status'], ['revision', 'rejected'])): ?>
                 <div class="curator-note-boxes">
                   <strong>Catatan Kurator:</strong> <?= htmlspecialchars($works['last_review_comments']); ?>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($works['status'] === 'waiting_payment' && ($works['payment_status'] ?? '') === 'rejected' && !empty($works['payment_admin_notes'])): ?>
+                <div style="margin-top: 0.5rem; background: #fef2f2; border-left: 3px solid #ef4444; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.8rem; color: #991b1b;">
+                  <strong>Catatan Penolakan Admin:</strong> <?= htmlspecialchars($works['payment_admin_notes']); ?>
                 </div>
                 <?php endif; ?>
               </td>
@@ -219,22 +229,46 @@ $error_messages = flashs::gets('error');
                 </div>
               </td>
               <td>
-                <?php
-                  $badge_class = 'status-' . htmlspecialchars($works['status']) . 's';
-                  $status_labels = [
-                    'submitted'        => 'Menunggu Kurator',
-                    'in_review'        => 'Sedang Diperiksa',
-                    'revision'         => 'Perlu Revisi',
-                    'waiting_payment'  => 'ACC — Bayar APC',
-                    'published'        => 'Diterbitkan',
-                    'rejected'         => 'Ditolak',
-                    'draft'            => 'Draf',
-                  ];
-                ?>
-                <span class="badge-statuss <?= $badge_class; ?>">
-                  <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i>
-                  <?= $status_labels[$works['status']] ?? htmlspecialchars($works['status']); ?>
-                </span>
+                <?php if ($works['status'] === 'waiting_payment'): ?>
+                  <?php if (($works['payment_status'] ?? '') === 'pending' && !empty($works['payment_proof_file'])): ?>
+                    <span class="badge-statuss" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;">
+                      <i class="fa-solid fa-hourglass-half"></i> Verifikasi Admin
+                    </span>
+                    <div style="font-size: 0.74rem; color: var(--text-mutes); margin-top: 0.25rem;">
+                      Bukti transfer sudah dikirim
+                    </div>
+                  <?php elseif (($works['payment_status'] ?? '') === 'rejected'): ?>
+                    <span class="badge-statuss" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+                      <i class="fa-solid fa-triangle-exclamation"></i> Bukti Ditolak
+                    </span>
+                    <div style="font-size: 0.74rem; color: #b91c1c; margin-top: 0.25rem;">
+                      Perlu unggah ulang bukti sah
+                    </div>
+                  <?php else: ?>
+                    <span class="badge-statuss status-waiting_payments">
+                      <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> ACC — Bayar APC
+                    </span>
+                    <div style="font-size: 0.74rem; color: #b45309; margin-top: 0.25rem;">
+                      Menunggu pembayaran
+                    </div>
+                  <?php endif; ?>
+                <?php else: ?>
+                  <?php
+                    $badge_class = 'status-' . htmlspecialchars($works['status']) . 's';
+                    $status_labels = [
+                      'submitted'        => 'Menunggu Kurator',
+                      'in_review'        => 'Sedang Diperiksa',
+                      'revision'         => 'Perlu Revisi',
+                      'published'        => 'Diterbitkan',
+                      'rejected'         => 'Ditolak',
+                      'draft'            => 'Draf',
+                    ];
+                  ?>
+                  <span class="badge-statuss <?= $badge_class; ?>">
+                    <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i>
+                    <?= $status_labels[$works['status']] ?? htmlspecialchars($works['status']); ?>
+                  </span>
+                <?php endif; ?>
               </td>
               <td>
                 <span style="font-weight: 700; color: var(--teal-primarys);">v<?= htmlspecialchars($works['file_version'] ?? 1); ?></span>
@@ -247,9 +281,19 @@ $error_messages = flashs::gets('error');
               <td>
                 <div style="display: flex; flex-direction: column; gap: 0.4rem;">
                   <?php if ($works['status'] === 'waiting_payment'): ?>
-                    <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); text-align: center;">
-                      <i class="fa-solid fa-qrcode"></i> Bayar & Terbitkan
-                    </a>
+                    <?php if (($works['payment_status'] ?? '') === 'pending' && !empty($works['payment_proof_file'])): ?>
+                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; background: #0284c7; color: #fff; text-align: center;">
+                        <i class="fa-solid fa-receipt"></i> Cek Pembayaran
+                      </a>
+                    <?php elseif (($works['payment_status'] ?? '') === 'rejected'): ?>
+                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 800; background: #dc2626; color: #fff; text-align: center;">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Ulang
+                      </a>
+                    <?php else: ?>
+                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); text-align: center;">
+                        <i class="fa-solid fa-qrcode"></i> Bayar APC
+                      </a>
+                    <?php endif; ?>
                   <?php elseif ($works['status'] === 'revision'): ?>
                     <a href="revises.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; text-align: center;">
                       <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Revisi

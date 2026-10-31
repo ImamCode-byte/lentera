@@ -129,7 +129,10 @@ class workss {
             SELECT w.*, sp.name AS prodi_name, wt.name AS type_name,
                    wf.original_name, wf.version AS file_version,
                    (SELECT comment FROM reviews WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS last_review_comments,
-                   (SELECT action FROM reviews WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS last_review_actions
+                   (SELECT action FROM reviews WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS last_review_actions,
+                   (SELECT status FROM paymentss WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS payment_status,
+                   (SELECT proof_file FROM paymentss WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS payment_proof_file,
+                   (SELECT admin_notes FROM paymentss WHERE work_id = w.id ORDER BY id DESC LIMIT 1) AS payment_admin_notes
             FROM works w
             JOIN study_programs sp ON w.prodi_id = sp.id
             JOIN work_types wt ON w.work_type_id = wt.id

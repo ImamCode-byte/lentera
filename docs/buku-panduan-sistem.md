@@ -436,3 +436,4 @@ Seluruh akun pengujian di bawah ini telah aktif di basis data `db_lentera` denga
 * **Gatekeeper Controller**: Pola arsitektur keamanan di mana pengunduhan file fisik tidak diberikan via tautan berkas langsung, melainkan dicegat oleh skrip peladen untuk memverifikasi hak akses pengguna dan mencatat log audit.
 * **Multi-Identifier Login**: Mekanisme masuk sistem yang fleksibel di mana pengguna dapat menggunakan NIM/NIP mahasiswa/dosen, nama pengguna (*username*), maupun alamat surat elektronik (*email*).
 * **Multi-Version Document**: Sistem manajemen berkas yang menyimpan riwayat perbaikan naskah ($v_1, v_2, \dots$) secara berkesinambungan tanpa menghapus naskah terdahulu sebagai bukti jejak rekam perbaikan akademik.
+

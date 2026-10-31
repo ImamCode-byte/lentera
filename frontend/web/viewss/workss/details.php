@@ -219,11 +219,11 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
           </div>
           <div>
             <h4 style="margin: 0 0 0.2rem; font-size: 1.05rem; font-weight: 800; color: #92400e;">Naskah Anda Telah di-ACC — Menunggu Pembayaran APC</h4>
-            <p style="margin: 0; font-size: 0.86rem; color: #b45309;">Selesaikan pembayaran melalui QRIS/DANA sebesar Rp 150.000 untuk menerbitkan naskah ini secara otomatis.</p>
+            <p style="margin: 0; font-size: 0.86rem; color: #b45309;">Selesaikan pembayaran melalui QRIS/DANA sebesar Rp 150.000 dan unggah bukti transfer agar Admin Repositori memverifikasi dan menerbitkan naskah ini ke publik.</p>
           </div>
         </div>
         <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 800; text-decoration: none;">
-          <i class="fa-solid fa-credit-card"></i> Bayar & Terbitkan Otomatis
+          <i class="fa-solid fa-credit-card"></i> Selesaikan Pembayaran APC
         </a>
       </div>
     <?php endif; ?>

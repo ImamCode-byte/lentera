@@ -1,7 +1,8 @@
 <?php
 /**
  * payments.php
- * halaman pembayaran biaya publikasi (apc) dengan qr code dana dan auto-publish
+ * halaman pembayaran biaya publikasi (apc) dengan qr code qris/dana
+ * alur pemisahan wewenang: penulis kirim bukti, admin verifikasi & publish
  * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
@@ -55,8 +56,9 @@ $payment_models = new paymentss();
 $invoices = $payment_models->get_or_creates_invoices($work_ids, $user_ids, 150000.00);
 
 $error_messages = '';
+$success_messages = flashs::gets('success');
 
-// Proses konfirmasi pembayaran -> AUTO PUBLISH!
+// Proses pengunggahan bukti pembayaran oleh penulis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrfs::validates($_POST['csrf_tokens'] ?? '')) {
         $error_messages = 'Sesi keamanan kedaluwarsa. Silakan muat ulang halaman.';
@@ -65,39 +67,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reference_numbers = trim($_POST['reference_numbers'] ?? '');
 
         if (empty($sender_names) || empty($reference_numbers)) {
-            $error_messages = 'Nama pengirim dan nomor referensi transaksi DANA wajib diisi.';
+            $error_messages = 'Nama pengirim dan nomor referensi transaksi wajib diisi.';
         } else {
-            // tangani upload bukti jika ada
-            $proof_path = null;
-            if (!empty($_FILES['proof_files']['name'])) {
+            // tangani upload bukti struk
+            $proof_path = $invoices['proof_file'] ?? null;
+            $has_new_file = !empty($_FILES['proof_files']['name']);
+
+            if ($has_new_file) {
                 $ext = strtolower(pathinfo($_FILES['proof_files']['name'], PATHINFO_EXTENSION));
                 if (in_array($ext, ['jpg', 'jpeg', 'png', 'pdf'])) {
                     $new_name = 'proof_' . $invoices['id'] . '_' . time() . '.' . $ext;
-                    $dest_dir = dirname(__DIR__, 4) . '/uploads/';
-                    if (!is_dir($dest_dir)) mkdir($dest_dir, 0777, true);
-                    if (move_uploaded_file($_FILES['proof_files']['tmp_name'], $dest_dir . $new_name)) {
-                        $proof_path = 'uploads/' . $new_name;
+                    $dest_dir = dirname(__DIR__, 4) . '/uploads/payment/';
+                    if (!is_dir($dest_dir)) {
+                        mkdir($dest_dir, 0777, true);
                     }
+                    if (move_uploaded_file($_FILES['proof_files']['tmp_name'], $dest_dir . $new_name)) {
+                        $proof_path = 'uploads/payment/' . $new_name;
+                    } else {
+                        $error_messages = 'Gagal menyimpan berkas bukti transfer ke server.';
+                    }
+                } else {
+                    $error_messages = 'Format berkas bukti struk harus berupa JPG, PNG, atau PDF.';
                 }
             }
 
-            // Jalankan auto-publish
-            $published_success = $payment_models->complete_and_auto_publish($invoices['id'], $work_ids, [
-                'sender_names'      => $sender_names,
-                'reference_numbers' => $reference_numbers,
-                'proof_files'       => $proof_path
-            ]);
+            if (empty($error_messages)) {
+                if (empty($proof_path)) {
+                    $error_messages = 'Unggah foto struk atau tangkapan layar bukti transfer transaksi Anda.';
+                } else {
+                    $submitted = $payment_models->submit_payment_proof($invoices['id'], [
+                        'sender_names'      => $sender_names,
+                        'reference_numbers' => $reference_numbers,
+                        'proof_files'       => $proof_path
+                    ]);
 
-            if ($published_success) {
-                flashs::sets_success('Alhamdulillah! Pembayaran Anda telah terkonfirmasi. Naskah Anda kini telah OTOMATIS RESMI DITERBITKAN ke etalase publik LENTERA Universitas Madura!');
-                header('Location: details.php?ids=' . $work_ids);
-                exit;
-            } else {
-                $error_messages = 'Terjadi kendala saat menerbitkan naskah otomatis. Silakan coba kembali.';
+                    if ($submitted) {
+                        flashs::sets_success('Bukti pembayaran Anda berhasil dikirim ke Admin Repositori LENTERA! Mohon menunggu verifikasi sebelum naskah otomatis aktif ke publik.');
+                        header('Location: payments.php?ids=' . $work_ids);
+                        exit;
+                    } else {
+                        $error_messages = 'Terjadi kendala teknis saat menyimpan konfirmasi pembayaran.';
+                    }
+                }
             }
         }
     }
 }
+
+// Muat ulang invoice terkini
+$invoices = $payment_models->get_by_work_ids($work_ids);
+$has_proof = !empty($invoices['proof_file']);
+$is_pending_review = ($invoices['status'] === 'pending' && $has_proof);
+$is_rejected = ($invoices['status'] === 'rejected');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -203,6 +224,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       gap: 0.85rem;
       align-items: flex-start;
     }
+    .alert-reviewing-boxes {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-smalls);
+      padding: 1.25rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+    .alert-rejected-boxes {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-smalls);
+      padding: 1.25rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
     @media (max-width: 820px) {
       .payment-layout-grids {
         grid-template-columns: 1fr;
@@ -234,20 +275,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </header>
 
   <main class="page-containers">
-    <!-- Notice ACC Kurator -->
-    <div class="alert-acc-boxes">
-      <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
-        <i class="fa-solid fa-check"></i>
+    <?php if ($is_rejected): ?>
+      <!-- Status Notice: DITOLAK ADMIN -->
+      <div class="alert-rejected-boxes">
+        <div style="width: 40px; height: 40px; background: #ef4444; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #b91c1c; margin: 0 0 0.35rem;">
+            Bukti Pembayaran Ditolak oleh Admin Repositori
+          </h3>
+          <p style="font-size: 0.88rem; color: #991b1b; line-height: 1.5; margin: 0 0 0.5rem;">
+            Catatan Administrator: <strong><?= htmlspecialchars($invoices['admin_notes'] ?? 'Bukti transfer tidak sesuai atau dana belum masuk.'); ?></strong>
+          </p>
+          <p style="font-size: 0.84rem; color: #7f1d1d; margin: 0;">
+            Silakan teliti kembali struk pembayaran dan kirimkan ulang bukti yang valid melalui formulir di bawah ini.
+          </p>
+        </div>
       </div>
-      <div>
-        <h3 style="font-size: 1.05rem; font-weight: 800; color: #15803d; margin: 0 0 0.35rem;">
-          Selamat! Naskah Anda Telah di-ACC oleh Tim Kurator
-        </h3>
-        <p style="font-size: 0.88rem; color: #166534; line-height: 1.5; margin: 0;">
-          Naskah ilmiah Anda telah dinyatakan memenuhi standar mutu dan siap diterbitkan ke repositori resmi Universitas Madura. Silakan selesaikan biaya pemeliharaan publikasi (APC) di bawah ini. <strong>Setelah konfirmasi pembayaran, naskah Anda akan OTOMATIS TERBIT ke publik secara instan tanpa perlu menunggu lagi!</strong>
-        </p>
+    <?php elseif ($is_pending_review): ?>
+      <!-- Status Notice: SEDANG DITINJAU ADMIN -->
+      <div class="alert-reviewing-boxes">
+        <div style="width: 40px; height: 40px; background: #0284c7; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #0369a1; margin: 0 0 0.35rem;">
+            Bukti Pembayaran Sedang Diverifikasi oleh Admin Repositori
+          </h3>
+          <p style="font-size: 0.88rem; color: #075985; line-height: 1.5; margin: 0;">
+            Anda telah berhasil mengunggah bukti pembayaran dengan nomor referensi <strong><?= htmlspecialchars($invoices['reference_number'] ?? '-'); ?></strong> atas nama <strong><?= htmlspecialchars($invoices['sender_name'] ?? '-'); ?></strong>. Administrator Repositori LENTERA sedang memeriksa rekening. Naskah Anda akan otomatis terbit begitu diverifikasi.
+          </p>
+        </div>
       </div>
-    </div>
+    <?php else: ?>
+      <!-- Status Notice: ACC KURATOR SIAP BAYAR -->
+      <div class="alert-acc-boxes">
+        <div style="width: 40px; height: 40px; background: #22c55e; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #15803d; margin: 0 0 0.35rem;">
+            Selamat! Naskah Anda Telah di-ACC oleh Tim Kurator
+          </h3>
+          <p style="font-size: 0.88rem; color: #166534; line-height: 1.5; margin: 0;">
+            Naskah ilmiah Anda telah dinyatakan memenuhi standar mutu akademik Universitas Madura. Silakan selesaikan biaya pemeliharaan publikasi (APC) di bawah ini dan unggah bukti transfer. Admin repositori akan memverifikasi dan menerbitkan karya Anda ke portal publik.
+          </p>
+        </div>
+      </div>
+    <?php endif; ?>
+
+    <?php if (!empty($success_messages)): ?>
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><?= htmlspecialchars($success_messages); ?></span>
+      </div>
+    <?php endif; ?>
 
     <?php if (!empty($error_messages)): ?>
       <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
@@ -257,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="payment-layout-grids">
-      <!-- SISI KIRI: INSTRUKSI PEMBAYARAN & QR DANA -->
+      <!-- SISI KIRI: INSTRUKSI PEMBAYARAN & QRIS -->
       <div class="payment-cards">
         <span style="font-size: 0.78rem; font-weight: 800; color: var(--gold-accents); text-transform: uppercase; letter-spacing: 0.5px;">
           <i class="fa-solid fa-qrcode"></i> QRIS & DANA Payment Gateway
@@ -288,18 +371,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             NMID: <strong style="font-family: monospace; color: var(--text-titles);">ID1026533208330</strong> (A01)
           </div>
 
-          <!-- Official QRIS Image from User -->
+          <!-- Official QRIS Image Accessible -->
           <div class="qr-image-frames">
-            <a href="/lentera/uploads/payment/QRIS%20IMAM.jpeg" target="_blank" title="Klik untuk melihat ukuran penuh">
-              <img src="/lentera/uploads/payment/QRIS%20IMAM.jpeg" alt="QRIS Resmi Dhes Mart / Imam">
+            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" target="_blank" title="Klik untuk melihat ukuran penuh">
+              <img src="/lentera/frontend/web/imgs/qris_lentera.jpeg" alt="QRIS Resmi Dhes Mart / Imam">
             </a>
           </div>
 
           <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-            <a href="/lentera/uploads/payment/QRIS%20IMAM.jpeg" download="QRIS_DhesMart_LENTERA.jpeg" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
+            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" download="QRIS_DhesMart_LENTERA.jpeg" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
               <i class="fa-solid fa-download"></i> Simpan Gambar QRIS
             </a>
-            <a href="/lentera/uploads/payment/QRIS%20IMAM.jpeg" target="_blank" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
+            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" target="_blank" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
               <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Penuh
             </a>
           </div>
@@ -321,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <strong style="color: #be123c;"><i class="fa-solid fa-qrcode"></i> Metode 1 — Scan QRIS (Semua E-Wallet & Bank):</strong><br>
               • Buka <strong>DANA, BCA, BRI, Mandiri, BNI, GoPay, OVO, ShopeePay</strong> atau m-Banking Anda.<br>
               • Arahkan scanner ke QRIS <strong>Dhes Mart</strong> di atas.<br>
-              • <em>Jika menggunakan HP yang sama:</em> Klik tombol <strong>"Simpan Gambar QRIS"</strong> di atas, lalu pada scanner DANA klik ikon <strong>Galeri Foto</strong> di pojok kanan atas untuk memilih gambar QRIS.<br>
+              • <em>Jika menggunakan HP yang sama:</em> Klik tombol <strong>"Simpan Gambar QRIS"</strong> di atas, lalu pada scanner DANA klik ikon <strong>Galeri Foto</strong> untuk memilih gambar QRIS.<br>
               • Masukkan nominal tepat <strong>Rp 150.000</strong> dan selesaikan pembayaran.
             </div>
 
@@ -342,56 +425,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
       </div>
 
-      <!-- SISI KANAN: FORM KONFIRMASI & AUTO-PUBLISH -->
+      <!-- SISI KANAN: FORM KONFIRMASI & UPLOAD BUKTI -->
       <div class="payment-cards" style="align-self: flex-start;">
-        <span style="font-size: 0.78rem; font-weight: 800; color: #16a34a; text-transform: uppercase; letter-spacing: 0.5px;">
-          <i class="fa-solid fa-bolt"></i> Instant Auto-Publish
+        <span style="font-size: 0.78rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-receipt"></i> Konfirmasi Pembayaran APC
         </span>
         <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-titles); margin-top: 0.35rem; margin-bottom: 0.5rem;">
-          Konfirmasi Pembayaran
+          Kirim Bukti Pembayaran
         </h3>
-        <p style="font-size: 0.84rem; color: var(--text-bodys); line-height: 1.5; margin-bottom: 1.5rem;">
-          Isi detail bukti pembayaran Anda di bawah ini. Sistem kami akan <strong>seketika menerbitkan naskah Anda ke publik secara otomatis</strong> tanpa verifikasi manual lagi.
+        <p style="font-size: 0.84rem; color: var(--text-bodys); line-height: 1.5; margin-bottom: 1.25rem;">
+          Unggah bukti transfer Anda. Tim Administrator Repositori akan memverifikasi keabsahan transaksi sebelum naskah resmi diterbitkan ke portal publik.
         </p>
+
+        <?php if ($has_proof): ?>
+          <!-- Ringkasan Bukti Terkirim Sebelumnya -->
+          <div style="background: #f8fafc; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.84rem;">
+            <div style="font-weight: 800; color: var(--text-titles); margin-bottom: 0.4rem;">
+              <i class="fa-solid fa-paperclip" style="color: var(--teal-primarys);"></i> Bukti Terakhir yang Diunggah:
+            </div>
+            <div style="color: var(--text-bodys); line-height: 1.5;">
+              Pengirim: <strong><?= htmlspecialchars($invoices['sender_name'] ?? '-'); ?></strong><br>
+              No. Referensi: <strong style="font-family: monospace;"><?= htmlspecialchars($invoices['reference_number'] ?? '-'); ?></strong><br>
+              Status: 
+              <?php if ($is_rejected): ?>
+                <span style="background: #fee2e2; color: #b91c1c; font-size: 0.75rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 3px;">Ditolak</span>
+              <?php else: ?>
+                <span style="background: #e0f2fe; color: #0284c7; font-size: 0.75rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 3px;">Menunggu Verifikasi Admin</span>
+              <?php endif; ?>
+            </div>
+            <div style="margin-top: 0.6rem;">
+              <a href="view_proofs.php?ids=<?= $invoices['id']; ?>" target="_blank" style="display: inline-flex; align-items: center; gap: 0.35rem; color: var(--teal-primarys); font-weight: 700; text-decoration: underline;">
+                <i class="fa-solid fa-eye"></i> Lihat Berkas Bukti yang Diunggah
+              </a>
+            </div>
+          </div>
+        <?php endif; ?>
 
         <form action="payments.php?ids=<?= $work_ids; ?>" method="POST" enctype="multipart/form-data">
           <?= csrfs::inputs(); ?>
 
           <div class="form-groups">
             <label class="form-labels" for="sender_names">
-              Nama Akun Pengirim DANA / Rekening <span style="color: #ef4444;">*</span>
+              Nama Akun Pengirim DANA / Rekening Bank <span style="color: #ef4444;">*</span>
             </label>
-            <input type="text" id="sender_names" name="sender_names" class="form-inputs" placeholder="Contoh: Achmad Fauzi atau Imam" value="<?= htmlspecialchars($_POST['sender_names'] ?? ''); ?>" required autofocus>
+            <input type="text" id="sender_names" name="sender_names" class="form-inputs" placeholder="Contoh: Achmad Fauzi atau Siti Aminah" value="<?= htmlspecialchars($_POST['sender_names'] ?? $invoices['sender_name'] ?? ''); ?>" required autofocus>
           </div>
 
           <div class="form-groups">
             <label class="form-labels" for="reference_numbers">
-              Nomor Referensi Transaksi DANA <span style="color: #ef4444;">*</span>
+              Nomor Referensi Transaksi DANA / Bank <span style="color: #ef4444;">*</span>
             </label>
-            <input type="text" id="reference_numbers" name="reference_numbers" class="form-inputs" placeholder="Contoh: 20261022100845..." value="<?= htmlspecialchars($_POST['reference_numbers'] ?? ''); ?>" required>
+            <input type="text" id="reference_numbers" name="reference_numbers" class="form-inputs" placeholder="Contoh: 20261022100845..." value="<?= htmlspecialchars($_POST['reference_numbers'] ?? $invoices['reference_number'] ?? ''); ?>" required>
             <div style="font-size: 0.76rem; color: var(--text-mutes); margin-top: 0.3rem;">
-              Dapat dilihat pada menu Riwayat / Detail Transaksi di aplikasi DANA Anda.
+              Tercantum pada menu Riwayat / Detail Transaksi di aplikasi DANA atau m-Banking Anda.
             </div>
           </div>
 
           <div class="form-groups">
             <label class="form-labels" for="proof_files">
-              Bukti Tangkapan Layar / Struk (Opsional)
+              Foto Struk / Tangkapan Layar Bukti Transfer <?= $has_proof ? '(Opsional jika tidak ganti)' : '<span style="color: #ef4444;">*</span>'; ?>
             </label>
-            <input type="file" id="proof_files" name="proof_files" class="form-inputs" accept="image/*,application/pdf" style="padding: 0.5rem;">
+            <input type="file" id="proof_files" name="proof_files" class="form-inputs" accept="image/jpeg,image/png,image/webp,application/pdf" style="padding: 0.5rem;" <?= $has_proof ? '' : 'required'; ?>>
             <div style="font-size: 0.76rem; color: var(--text-mutes); margin-top: 0.3rem;">
-              Format JPG, PNG, atau PDF (maks. 5MB).
+              Format berkas JPG, PNG, atau PDF (maksimal 5MB).
             </div>
           </div>
 
           <button type="submit" class="btn-primarys btn-golds" style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 0.95rem; margin-top: 1rem;">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Konfirmasi & Terbitkan Naskah Otomatis
+            <?php if ($has_proof): ?>
+              <i class="fa-solid fa-arrows-rotate"></i> Perbarui & Kirim Ulang Bukti Pembayaran
+            <?php else: ?>
+              <i class="fa-solid fa-paper-plane"></i> Kirim Bukti Pembayaran ke Admin
+            <?php endif; ?>
           </button>
         </form>
 
         <div style="margin-top: 1.5rem; text-align: center;">
           <a href="indexs.php" style="color: var(--text-mutes); font-size: 0.84rem; text-decoration: none;">
-            <i class="fa-solid fa-clock"></i> Bayar nanti melalui dashboard saya
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard Karya Saya
           </a>
         </div>
       </div>

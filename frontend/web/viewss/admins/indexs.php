@@ -8,6 +8,7 @@
 require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
 require_once dirname(__DIR__, 4) . '/backend/apps/modelss/users.php';
 require_once dirname(__DIR__, 4) . '/backend/apps/modelss/workss.php';
+require_once dirname(__DIR__, 4) . '/backend/apps/modelss/paymentss.php';
 require_once dirname(__DIR__, 4) . '/backend/apps/modelss/facultiess.php';
 require_once dirname(__DIR__, 4) . '/backend/apps/modelss/study_programss.php';
 require_once dirname(__DIR__, 4) . '/backend/apps/modelss/work_typess.php';
@@ -29,6 +30,7 @@ $user_names = sessions::gets('user_names');
 $user_emails = sessions::gets('user_emails');
 $user_models = new users();
 $work_models = new workss();
+$payment_models = new paymentss();
 $faculty_models = new facultiess();
 $prodi_models = new study_programss();
 $type_models = new work_typess();
@@ -50,12 +52,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_models->update_user_roles($target_user_id, $new_role);
             flashs::sets_success("Peran pengguna berhasil diperbarui menjadi '{$new_role}'.");
         }
+        header('Location: indexs.php?tab=users');
+        exit;
     } elseif ($admin_actions === 'toggle_active') {
         $target_user_id = (int)($_POST['target_user_id'] ?? 0);
         if ($target_user_id) {
             $user_models->toggle_user_actives($target_user_id);
             flashs::sets_success("Status keaktifan akun pengguna berhasil diubah.");
         }
+        header('Location: indexs.php?tab=users');
+        exit;
+    } elseif ($admin_actions === 'verify_payment') {
+        $payment_id = (int)($_POST['payment_id'] ?? 0);
+        $admin_id = (int)sessions::gets('user_ids');
+        if ($payment_id) {
+            $ok = $payment_models->verify_and_publish($payment_id, $admin_id);
+            if ($ok) {
+                flashs::sets_success("Pembayaran APC berhasil diverifikasi! Naskah telah otomatis RESMI DITERBITKAN ke repositori publik LENTERA.");
+            } else {
+                flashs::sets_error("Gagal memproses verifikasi dan penerbitan naskah.");
+            }
+        }
+        header('Location: indexs.php?tab=payments');
+        exit;
+    } elseif ($admin_actions === 'reject_payment') {
+        $payment_id = (int)($_POST['payment_id'] ?? 0);
+        $admin_id = (int)sessions::gets('user_ids');
+        $reason = trim($_POST['rejection_reason'] ?? 'Bukti transfer tidak sah atau dana tidak masuk ke rekening repositori.');
+        if ($payment_id) {
+            $ok = $payment_models->reject_payment_proof($payment_id, $reason, $admin_id);
+            if ($ok) {
+                flashs::sets_success("Bukti pembayaran ditolak. Catatan penolakan telah dikirimkan ke Penulis untuk diunggah ulang.");
+            } else {
+                flashs::sets_error("Gagal menolak bukti pembayaran.");
+            }
+        }
+        header('Location: indexs.php?tab=payments');
+        exit;
     }
 
     header('Location: indexs.php');
@@ -70,6 +103,8 @@ $all_faculties = $faculty_models->get_all_with_counts();
 $all_prodis = $prodi_models->get_all_actives();
 $all_types = $type_models->get_all_actives();
 $download_logs = $work_models->get_recent_download_logs(15);
+$pending_verifications = $payment_models->get_pending_verifications();
+$pending_payments_count = $payment_models->get_pending_count();
 
 $success_messages = flashs::gets('success');
 $error_messages = flashs::gets('error');
@@ -118,7 +153,7 @@ $error_messages = flashs::gets('error');
     }
     .metric-grids {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
@@ -146,6 +181,7 @@ $error_messages = flashs::gets('error');
       align-items: center;
       justify-content: center;
       font-size: 1.35rem;
+      flex-shrink: 0;
     }
     .metric-numbers {
       font-size: 1.75rem;
@@ -277,7 +313,7 @@ $error_messages = flashs::gets('error');
         </span>
         <h1 style="font-size: 2rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">Pusat Kontrol & Manajemen Repositori</h1>
         <p style="color: #e2e8f0; font-size: 0.95rem; margin-top: 0.4rem; line-height: 1.5;">
-          Kelola seluruh master data akademik Universitas Madura, tetapkan dewan kurator, pantau pengguna civitas akademika, dan audit aktivitas unduhan naskah ilmiah.
+          Kelola master data akademik Universitas Madura, pantau dewan kurator, audit unduhan karya ilmiah, dan verifikasi berkas pembayaran publikasi (APC) secara resmi.
         </p>
       </div>
     </div>
@@ -304,7 +340,7 @@ $error_messages = flashs::gets('error');
         </div>
         <div>
           <div class="metric-numbers"><?= $user_stats['total_users'] ?? 0; ?></div>
-          <div class="metric-titles">Total Pengguna (<?= $user_stats['total_curators'] ?? 0; ?> Kurator)</div>
+          <div class="metric-titles">Pengguna (<?= $user_stats['total_curators'] ?? 0; ?> Kurator)</div>
         </div>
       </div>
 
@@ -328,8 +364,20 @@ $error_messages = flashs::gets('error');
         </div>
       </div>
 
+      <div class="metric-cards" style="cursor: pointer;" onclick="switch_admin_panel('payments')">
+        <div class="metric-icons" style="background: #fef3c7; color: #b45309;">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div>
+          <div class="metric-numbers" style="color: <?= $pending_payments_count > 0 ? '#d97706' : '#15803d'; ?>;">
+            <?= $pending_payments_count; ?>
+          </div>
+          <div class="metric-titles">Antrean Bayar APC</div>
+        </div>
+      </div>
+
       <div class="metric-cards">
-        <div class="metric-icons" style="background: #fef3c7; color: #d97706;">
+        <div class="metric-icons" style="background: #f1f5f9; color: #475569;">
           <i class="fa-solid fa-download"></i>
         </div>
         <div>
@@ -341,16 +389,24 @@ $error_messages = flashs::gets('error');
 
     <!-- Admin Navigation Tabs -->
     <div class="admin-nav-tabs">
-      <button type="button" class="nav-tab-items actives" onclick="switch_admin_panel('users')">
+      <button type="button" id="tab_btn_users" class="nav-tab-items actives" onclick="switch_admin_panel('users')">
         <i class="fa-solid fa-user-gear"></i> Manajemen Pengguna & Peran
       </button>
-      <button type="button" class="nav-tab-items" onclick="switch_admin_panel('faculties')">
+      <button type="button" id="tab_btn_payments" class="nav-tab-items" onclick="switch_admin_panel('payments')">
+        <i class="fa-solid fa-receipt"></i> Verifikasi Pembayaran APC
+        <?php if ($pending_payments_count > 0): ?>
+          <span style="background: #ef4444; color: #fff; font-size: 0.72rem; padding: 0.18rem 0.55rem; border-radius: 999px; margin-left: 0.35rem; font-weight: 800;">
+            <?= $pending_payments_count; ?>
+          </span>
+        <?php endif; ?>
+      </button>
+      <button type="button" id="tab_btn_faculties" class="nav-tab-items" onclick="switch_admin_panel('faculties')">
         <i class="fa-solid fa-graduation-cap"></i> Master Fakultas & Prodi UNIRA
       </button>
-      <button type="button" class="nav-tab-items" onclick="switch_admin_panel('types')">
+      <button type="button" id="tab_btn_types" class="nav-tab-items" onclick="switch_admin_panel('types')">
         <i class="fa-solid fa-layer-group"></i> Master Tipe Karya
       </button>
-      <button type="button" class="nav-tab-items" onclick="switch_admin_panel('logs')">
+      <button type="button" id="tab_btn_logs" class="nav-tab-items" onclick="switch_admin_panel('logs')">
         <i class="fa-solid fa-clock-rotate-left"></i> Log Unduhan & Aktivitas
       </button>
     </div>
@@ -461,7 +517,168 @@ $error_messages = flashs::gets('error');
       </div>
     </div>
 
-    <!-- PANEL 2: MASTER FAKULTAS & PRODI -->
+    <!-- PANEL 2: VERIFIKASI PEMBAYARAN APC -->
+    <div id="panel_payments" class="table-cards" style="display: none;">
+      <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
+            <i class="fa-solid fa-receipt" style="color: var(--teal-primarys);"></i> Verifikasi Pembayaran Biaya Publikasi (APC)
+          </h3>
+          <p style="font-size: 0.82rem; color: var(--text-bodys); margin: 0.25rem 0 0 0;">
+            Periksa keabsahan bukti struk transfer DANA / QRIS dari penulis yang telah di-ACC kurator, lalu verifikasi untuk menerbitkan karya secara instan.
+          </p>
+        </div>
+        <span style="font-size: 0.82rem; color: var(--text-mutes);">
+          Menunggu Verifikasi: <strong style="color: <?= $pending_payments_count > 0 ? '#ef4444' : '#15803d'; ?>;"><?= $pending_payments_count; ?> transaksi</strong>
+        </span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="custom-tables">
+          <thead>
+            <tr>
+              <th>No. Invoice & Tanggal</th>
+              <th>Penulis & Program Studi</th>
+              <th>Judul Naskah Ilmiah</th>
+              <th>Nominal & Info Pengirim</th>
+              <th>Bukti Struk</th>
+              <th>Status</th>
+              <th style="text-align: right; min-width: 170px;">Tindakan Admin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (empty($pending_verifications)): ?>
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 3.5rem; color: var(--text-mutes);">
+                <i class="fa-regular fa-circle-check" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 0.75rem; display: block;"></i>
+                Tidak ada antrean pembayaran APC yang memerlukan tindakan saat ini.
+              </td>
+            </tr>
+            <?php else: ?>
+              <?php foreach ($pending_verifications as $pv): ?>
+              <tr>
+                <td>
+                  <span style="font-family: monospace; font-weight: 800; color: var(--text-titles); font-size: 0.86rem; display: block;">
+                    <?= htmlspecialchars($pv['invoice_number']); ?>
+                  </span>
+                  <span style="font-size: 0.78rem; color: var(--text-mutes);">
+                    <?= date('d M Y, H:i', strtotime($pv['created_at'])); ?> WIB
+                  </span>
+                </td>
+                <td>
+                  <strong style="color: var(--text-titles); font-size: 0.92rem;"><?= htmlspecialchars($pv['author_name']); ?></strong>
+                  <div style="font-size: 0.78rem; color: var(--text-mutes); margin-top: 0.15rem;">
+                    NIM: <?= htmlspecialchars($pv['author_nim_nip'] ?? '-'); ?>
+                  </div>
+                  <div style="font-size: 0.78rem; color: var(--teal-primarys); font-weight: 600;">
+                    <?= htmlspecialchars($pv['prodi_name'] ?? '-'); ?>
+                  </div>
+                </td>
+                <td style="max-width: 250px;">
+                  <strong style="color: var(--text-titles); font-size: 0.88rem; line-height: 1.4; display: block;">
+                    <?= htmlspecialchars($pv['work_title']); ?>
+                  </strong>
+                  <span style="font-size: 0.75rem; color: var(--text-mutes);">
+                    Status Naskah: <em style="font-weight: 600;"><?= htmlspecialchars($pv['work_status']); ?></em>
+                  </span>
+                </td>
+                <td>
+                  <div style="font-weight: 800; color: var(--teal-primarys); font-size: 0.95rem;">
+                    Rp <?= number_format($pv['amount'], 0, ',', '.'); ?>
+                  </div>
+                  <div style="font-size: 0.8rem; color: var(--text-bodys); margin-top: 0.2rem;">
+                    A/n: <strong><?= htmlspecialchars($pv['sender_name'] ?? '-'); ?></strong>
+                  </div>
+                  <div style="font-size: 0.76rem; color: var(--text-mutes); font-family: monospace;">
+                    Ref: <?= htmlspecialchars($pv['reference_number'] ?? '-'); ?>
+                  </div>
+                </td>
+                <td>
+                  <?php if (!empty($pv['proof_file'])): ?>
+                    <a href="../workss/view_proofs.php?ids=<?= $pv['id']; ?>" target="_blank" class="btn-logins" style="font-size: 0.76rem; padding: 0.35rem 0.65rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                      <i class="fa-solid fa-file-invoice"></i> Lihat Struk
+                    </a>
+                  <?php else: ?>
+                    <span style="color: var(--text-mutes); font-size: 0.78rem; font-style: italic;">Belum diunggah</span>
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <?php if ($pv['status'] === 'completed'): ?>
+                    <span style="background: #dcfce7; color: #15803d; font-size: 0.74rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                      <i class="fa-solid fa-check"></i> LUNAS & TERBIT
+                    </span>
+                  <?php elseif ($pv['status'] === 'rejected'): ?>
+                    <span style="background: #fee2e2; color: #b91c1c; font-size: 0.74rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                      <i class="fa-solid fa-xmark"></i> DITOLAK
+                    </span>
+                    <?php if (!empty($pv['admin_notes'])): ?>
+                      <div style="font-size: 0.75rem; color: #b91c1c; margin-top: 0.25rem; max-width: 140px;">
+                        <?= htmlspecialchars($pv['admin_notes']); ?>
+                      </div>
+                    <?php endif; ?>
+                  <?php else: ?>
+                    <?php if (!empty($pv['proof_file'])): ?>
+                      <span style="background: #fef3c7; color: #b45309; font-size: 0.74rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                        <i class="fa-solid fa-clock"></i> BUTUH VERIFIKASI
+                      </span>
+                    <?php else: ?>
+                      <span style="background: #f1f5f9; color: #64748b; font-size: 0.74rem; font-weight: 800; padding: 0.25rem 0.6rem; border-radius: 999px;">
+                        MENUNGGU PENULIS
+                      </span>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                </td>
+                <td style="text-align: right;">
+                  <?php if ($pv['status'] === 'pending' && !empty($pv['proof_file'])): ?>
+                    <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
+                      <!-- Form Verifikasi & Terbitkan -->
+                      <form action="indexs.php" method="POST" onsubmit="return confirm('Apakah Anda yakin verifikasi pembayaran ini sah? Naskah karya ilmiah akan seketika RESMI DITERBITKAN ke portal publik.');">
+                        <?= csrfs::inputs(); ?>
+                        <input type="hidden" name="admin_actions" value="verify_payment">
+                        <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
+                        <button type="submit" class="btn-primarys" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16a34a; border-color: #16a34a; color: #fff;">
+                          <i class="fa-solid fa-check"></i> ACC & Terbitkan
+                        </button>
+                      </form>
+
+                      <!-- Form Tolak Struk -->
+                      <form action="indexs.php" method="POST" onsubmit="return prompt_reject(this);">
+                        <?= csrfs::inputs(); ?>
+                        <input type="hidden" name="admin_actions" value="reject_payment">
+                        <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
+                        <input type="hidden" name="rejection_reason" value="">
+                        <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.4rem 0.75rem; border-radius: var(--radius-smalls); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                          <i class="fa-solid fa-xmark"></i> Tolak
+                        </button>
+                      </form>
+                    </div>
+                  <?php elseif ($pv['status'] === 'completed'): ?>
+                    <span style="font-size: 0.78rem; color: #15803d; font-weight: 700;">
+                      <i class="fa-solid fa-circle-check"></i> Selesai
+                    </span>
+                  <?php elseif ($pv['status'] === 'rejected'): ?>
+                    <!-- Opsi ACC Ulang jika penulis sudah mengoreksi transfer -->
+                    <form action="indexs.php" method="POST" onsubmit="return confirm('Verifikasi pembayaran yang sebelumnya ditolak?');">
+                      <?= csrfs::inputs(); ?>
+                      <input type="hidden" name="admin_actions" value="verify_payment">
+                      <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
+                      <button type="submit" class="btn-primarys" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; background: #0284c7; border-color: #0284c7; color: #fff;">
+                        <i class="fa-solid fa-rotate-right"></i> ACC Naskah
+                      </button>
+                    </form>
+                  <?php else: ?>
+                    <span style="font-size: 0.78rem; color: var(--text-mutes);">-</span>
+                  <?php endif; ?>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PANEL 3: MASTER FAKULTAS & PRODI -->
     <div id="panel_faculties" class="table-cards" style="display: none;">
       <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors);">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
@@ -511,7 +728,7 @@ $error_messages = flashs::gets('error');
       </div>
     </div>
 
-    <!-- PANEL 3: MASTER TIPE KARYA ILMIAH -->
+    <!-- PANEL 4: MASTER TIPE KARYA ILMIAH -->
     <div id="panel_types" class="table-cards" style="display: none;">
       <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors);">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
@@ -553,7 +770,7 @@ $error_messages = flashs::gets('error');
       </div>
     </div>
 
-    <!-- PANEL 4: LOG AKTIVITAS & UNDUHAN -->
+    <!-- PANEL 5: LOG AKTIVITAS & UNDUHAN -->
     <div id="panel_logs" class="table-cards" style="display: none;">
       <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center;">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
@@ -609,7 +826,7 @@ $error_messages = flashs::gets('error');
 
   <script>
     function switch_admin_panel(panel_id) {
-      const panels = ['users', 'faculties', 'types', 'logs'];
+      const panels = ['users', 'payments', 'faculties', 'types', 'logs'];
       panels.forEach(p => {
         const el = document.getElementById('panel_' + p);
         if (el) el.style.display = p === panel_id ? 'block' : 'none';
@@ -617,8 +834,31 @@ $error_messages = flashs::gets('error');
 
       const buttons = document.querySelectorAll('.nav-tab-items');
       buttons.forEach(b => b.classList.remove('actives'));
-      event.currentTarget.classList.add('actives');
+
+      const activeBtn = document.getElementById('tab_btn_' + panel_id);
+      if (activeBtn) {
+        activeBtn.classList.add('actives');
+      }
     }
+
+    function prompt_reject(form) {
+      const reason = prompt('Masukkan alasan penolakan bukti transfer pembayaran:\n(Contoh: Dana belum masuk, struk buram, nominal tidak cocok)');
+      if (!reason || reason.trim() === '') {
+        alert('Tindakan penolakan dibatalkan karena alasan wajib diisi.');
+        return false;
+      }
+      form.rejection_reason.value = reason.trim();
+      return true;
+    }
+
+    // Periksa tab aktif dari parameter URL ?tab=...
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('tab');
+      if (tab && ['users', 'payments', 'faculties', 'types', 'logs'].includes(tab)) {
+        switch_admin_panel(tab);
+      }
+    });
   </script>
 </body>
 </html>

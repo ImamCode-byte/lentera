@@ -226,6 +226,8 @@ CREATE TABLE IF NOT EXISTS paymentss (
     sender_name         VARCHAR(100) NULL,
     reference_number    VARCHAR(100) NULL,
     proof_file          VARCHAR(255) NULL,
+    admin_notes         TEXT NULL,
+    verified_by         INT NULL,
     status              ENUM('pending','completed','rejected') NOT NULL DEFAULT 'pending',
     paid_at             TIMESTAMP NULL,
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
