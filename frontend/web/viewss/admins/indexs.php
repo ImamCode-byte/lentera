@@ -1,8 +1,8 @@
 <?php
 /**
  * indexs.php
- * panel super administrator repositori karya ilmiah lenteras universitas madura
- * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
+ * Panel Super Administrator Repositori Karya Ilmiah Lentera Universitas Madura
+ * Seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
 require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
@@ -18,7 +18,7 @@ require_once dirname(__DIR__, 4) . '/backend/apps/helperss/csrfs.php';
 
 sessions::starts();
 
-// verifikasi ketat hak akses: hanya role admin yang diizinkan
+// Verifikasi ketat hak akses: hanya role admin yang diizinkan
 $user_roles = sessions::gets('user_roles');
 if ($user_roles !== 'admin') {
     flashs::sets_error('Akses ditolak. Halaman ini memiliki proteksi ketat dan khusus untuk Super Administrator Repositori.');
@@ -35,7 +35,7 @@ $faculty_models = new facultiess();
 $prodi_models = new study_programss();
 $type_models = new work_typess();
 
-// penanganan aksi pengelolaan admin (POST)
+// Penanganan aksi pengelolaan admin (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrfs::validates($_POST['csrf_tokens'] ?? '')) {
         flashs::sets_error('Sesi keamanan kedaluwarsa. Silakan ulangi.');
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($payment_id) {
             $ok = $payment_models->verify_and_publish($payment_id, $admin_id);
             if ($ok) {
-                flashs::sets_success("Pembayaran APC berhasil diverifikasi! Naskah telah otomatis RESMI DITERBITKAN ke repositori publik LENTERA.");
+                flashs::sets_success("Pembayaran APC berhasil diverifikasi! Naskah telah otomatis RESMI DITERBITKAN ke repositori publik Lentera.");
             } else {
                 flashs::sets_error("Gagal memproses verifikasi dan penerbitan naskah.");
             }
@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ambil data untuk seluruh panel
+// Ambil data untuk seluruh panel
 $user_stats = $user_models->get_admin_user_stats();
 $repo_stats = $work_models->get_admin_repository_stats();
 $all_users = $user_models->get_all_users_for_admin();
@@ -114,9 +114,9 @@ $error_messages = flashs::gets('error');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Super Admin — LENTERA Universitas Madura</title>
-  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
-  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
+  <title>Panel Super Admin — Lentera Universitas Madura</title>
+  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.2">
+  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -138,7 +138,7 @@ $error_messages = flashs::gets('error');
       margin-bottom: 2rem;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 12px 30px rgba(15, 76, 92, 0.25);
+      box-shadow: 0 12px 30px rgba(15, 76, 92, 0.22);
     }
     .admin-headers::after {
       content: '';
@@ -147,14 +147,14 @@ $error_messages = flashs::gets('error');
       bottom: -30px;
       width: 260px;
       height: 260px;
-      background: radial-gradient(circle, rgba(251, 139, 36, 0.22) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(217, 119, 6, 0.2) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
     }
     .metric-grids {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.15rem;
       margin-bottom: 2rem;
     }
     .metric-cards {
@@ -162,14 +162,14 @@ $error_messages = flashs::gets('error');
       border: 1px solid var(--border-colors);
       border-radius: var(--radius-mediums);
       padding: 1.35rem 1.25rem;
-      box-shadow: var(--shadow-smalls);
+      box-shadow: 0 2px 8px rgba(15, 76, 92, 0.04);
       display: flex;
       align-items: center;
       gap: 1.1rem;
       transition: var(--transition-fasts);
     }
     .metric-cards:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: var(--shadow-mediums);
       border-color: var(--teal-primarys);
     }
@@ -184,13 +184,13 @@ $error_messages = flashs::gets('error');
       flex-shrink: 0;
     }
     .metric-numbers {
-      font-size: 1.75rem;
+      font-size: 1.7rem;
       font-weight: 800;
       color: var(--text-titles);
       line-height: 1.1;
     }
     .metric-titles {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-bodys);
       font-weight: 700;
       margin-top: 0.25rem;
@@ -203,12 +203,14 @@ $error_messages = flashs::gets('error');
       margin-bottom: 1.5rem;
       border-bottom: 2px solid #e2e8f0;
       padding-bottom: 0.5rem;
-      flex-wrap: wrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      white-space: nowrap;
     }
     .nav-tab-items {
-      padding: 0.65rem 1.25rem;
+      padding: 0.65rem 1.15rem;
       border-radius: var(--radius-smalls);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--text-bodys);
       background: transparent;
@@ -218,6 +220,7 @@ $error_messages = flashs::gets('error');
       align-items: center;
       gap: 0.55rem;
       transition: var(--transition-fasts);
+      flex-shrink: 0;
     }
     .nav-tab-items:hover {
       background: #e2e8f0;
@@ -233,7 +236,7 @@ $error_messages = flashs::gets('error');
       border-radius: var(--radius-larges);
       overflow: hidden;
       border: 1px solid var(--border-colors);
-      box-shadow: var(--shadow-mediums);
+      box-shadow: 0 4px 16px rgba(15, 76, 92, 0.05);
       margin-bottom: 2rem;
     }
     .custom-tables {
@@ -243,7 +246,7 @@ $error_messages = flashs::gets('error');
     .custom-tables th {
       background: #f8fafc;
       padding: 1rem 1.25rem;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 800;
       color: var(--text-titles);
       border-bottom: 2px solid var(--border-colors);
@@ -273,34 +276,77 @@ $error_messages = flashs::gets('error');
     .role-admin { background: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
     .role-curator { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
     .role-author { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+    @media (max-width: 768px) {
+      .page-containers {
+        padding: 0 1rem;
+        margin: 1.5rem auto 3rem;
+      }
+      .admin-headers {
+        padding: 1.75rem 1.25rem;
+      }
+      .metric-grids {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .metric-grids {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top App Navigation -->
-  <header style="background: #ffffff; border-bottom: 1px solid var(--border-colors); padding: 0.85rem 0;">
-    <div class="page-containers" style="margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-      <a href="../../indexs.php" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal-primarys), var(--teal-darks)); border-radius: var(--radius-smalls); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem;">
-          <i class="fa-solid fa-fire-flame-curved"></i>
-        </div>
+  <!-- Navigasi Atas Responsif -->
+  <header class="nav-containers">
+    <div class="nav-wrappers">
+      <a href="../../indexs.php" class="logo-links">
+        <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span style="font-size: 1.25rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</span>
-          <span style="display: block; font-size: 0.68rem; font-weight: 700; color: var(--gold-accents); text-transform: uppercase;">universitas madura</span>
+          <span class="logo-texts">Lentera</span>
+          <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
 
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <div style="text-align: right;">
-          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
+      <!-- Desktop Nav -->
+      <nav class="nav-links-wrappers" style="display: flex; align-items: center; gap: 1rem;">
+        <div style="text-align: right; margin-right: 0.5rem;">
+          <div style="font-size: 0.86rem; font-weight: 800; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
           <span class="role-badge role-admin">
             <i class="fa-solid fa-crown"></i> SUPER ADMIN
           </span>
         </div>
-        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Portal Publik</a>
+        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda</a>
         <a href="../reviews/indexs.php" class="nav-items-links"><i class="fa-solid fa-feather-pointed"></i> Panel Kurator</a>
-        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.45rem 1rem; font-size: 0.82rem;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+        <a href="../workss/indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.45rem 1rem; font-size: 0.84rem;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </a>
+      </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Buka Menu Navigasi">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="nav-mobile-drawers" id="mobile_drawer">
+      <div style="padding: 0.5rem 0 1rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 0.5rem;">
+        <div style="font-weight: 800; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
+        <span class="role-badge role-admin" style="margin-top: 0.25rem;">
+          <i class="fa-solid fa-crown"></i> SUPER ADMIN
+        </span>
       </div>
+      <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda Utama</a>
+      <a href="indexs.php" class="nav-items-links"><i class="fa-solid fa-shield-halved"></i> Panel Admin</a>
+      <a href="../reviews/indexs.php" class="nav-items-links"><i class="fa-solid fa-feather-pointed"></i> Panel Kurator</a>
+      <a href="../workss/indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+      <a href="../auths/logouts.php" class="btn-logins" style="display: inline-flex; justify-content: center; margin-top: 0.5rem;">
+        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+      </a>
     </div>
   </header>
 
@@ -308,11 +354,11 @@ $error_messages = flashs::gets('error');
     <!-- Admin Hero Banner -->
     <div class="admin-headers">
       <div style="max-width: 820px; position: relative; z-index: 1;">
-        <span style="background: rgba(251, 139, 36, 0.25); color: #ffd166; font-size: 0.76rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: var(--radius-fulls); text-transform: uppercase; letter-spacing: 0.5px;">
+        <span style="background: rgba(217, 119, 6, 0.25); color: #ffd166; font-size: 0.76rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: var(--radius-fulls); text-transform: uppercase; letter-spacing: 0.5px;">
           <i class="fa-solid fa-shield-halved"></i> Master Control Panel
         </span>
-        <h1 style="font-size: 2rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">Pusat Kontrol & Manajemen Repositori</h1>
-        <p style="color: #e2e8f0; font-size: 0.95rem; margin-top: 0.4rem; line-height: 1.5;">
+        <h1 style="font-size: 1.95rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">Pusat Kontrol & Manajemen Repositori</h1>
+        <p style="color: #e2e8f0; font-size: 0.92rem; margin-top: 0.4rem; line-height: 1.5;">
           Kelola master data akademik Universitas Madura, pantau dewan kurator, audit unduhan karya ilmiah, dan verifikasi berkas pembayaran publikasi (APC) secara resmi.
         </p>
       </div>
@@ -320,14 +366,14 @@ $error_messages = flashs::gets('error');
 
     <?php if (!empty($success_messages)): ?>
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
+        <i class="fa-solid fa-circle-check" style="font-size: 1.2rem; flex-shrink: 0;"></i>
         <span style="font-weight: 600;"><?= htmlspecialchars($success_messages); ?></span>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($error_messages)): ?>
       <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2rem;"></i>
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2rem; flex-shrink: 0;"></i>
         <span style="font-weight: 600;"><?= htmlspecialchars($error_messages); ?></span>
       </div>
     <?php endif; ?>
@@ -413,7 +459,7 @@ $error_messages = flashs::gets('error');
 
     <!-- PANEL 1: PENGGUNA & HAK AKSES -->
     <div id="panel_users" class="table-cards">
-      <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center;">
+      <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
           <i class="fa-solid fa-users-gear" style="color: var(--teal-primarys);"></i> Daftar Civitas Akademika & Hak Akses
         </h3>
@@ -422,7 +468,7 @@ $error_messages = flashs::gets('error');
         </span>
       </div>
 
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -486,13 +532,13 @@ $error_messages = flashs::gets('error');
                 <?php endif; ?>
               </td>
               <td style="text-align: right;">
-                <div style="display: inline-flex; gap: 0.4rem; align-items: center;">
+                <div style="display: inline-flex; gap: 0.4rem; align-items: center; justify-content: flex-end;">
                   <!-- Form Ubah Role -->
                   <form action="indexs.php" method="POST" style="display: inline-block;">
                     <?= csrfs::inputs(); ?>
                     <input type="hidden" name="admin_actions" value="update_role">
                     <input type="hidden" name="target_user_id" value="<?= $usr['id']; ?>">
-                    <select name="new_role" onchange="this.form.submit()" style="padding: 0.35rem 0.6rem; font-size: 0.78rem; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls); background: #ffffff; cursor: pointer;">
+                    <select name="new_role" onchange="this.form.submit()" style="padding: 0.35rem 0.6rem; font-size: 0.78rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); background: #ffffff; cursor: pointer;">
                       <option value="author" <?= $usr['role'] === 'author' ? 'selected' : ''; ?>>Jadikan Penulis</option>
                       <option value="curator" <?= $usr['role'] === 'curator' ? 'selected' : ''; ?>>Jadikan Kurator</option>
                       <option value="admin" <?= $usr['role'] === 'admin' ? 'selected' : ''; ?>>Jadikan Admin</option>
@@ -533,7 +579,7 @@ $error_messages = flashs::gets('error');
         </span>
       </div>
 
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -636,7 +682,7 @@ $error_messages = flashs::gets('error');
                         <?= csrfs::inputs(); ?>
                         <input type="hidden" name="admin_actions" value="verify_payment">
                         <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
-                        <button type="submit" class="btn-primarys" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16a34a; border-color: #16a34a; color: #fff;">
+                        <button type="submit" class="btn-primarys" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16a34a; border-color: #16a34a; color: #fff; white-space: nowrap;">
                           <i class="fa-solid fa-check"></i> ACC & Terbitkan
                         </button>
                       </form>
@@ -647,7 +693,7 @@ $error_messages = flashs::gets('error');
                         <input type="hidden" name="admin_actions" value="reject_payment">
                         <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
                         <input type="hidden" name="rejection_reason" value="">
-                        <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.4rem 0.75rem; border-radius: var(--radius-smalls); font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                        <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.4rem 0.75rem; border-radius: var(--radius-smalls); font-size: 0.78rem; font-weight: 700; cursor: pointer; white-space: nowrap;">
                           <i class="fa-solid fa-xmark"></i> Tolak
                         </button>
                       </form>
@@ -662,7 +708,7 @@ $error_messages = flashs::gets('error');
                       <?= csrfs::inputs(); ?>
                       <input type="hidden" name="admin_actions" value="verify_payment">
                       <input type="hidden" name="payment_id" value="<?= $pv['id']; ?>">
-                      <button type="submit" class="btn-primarys" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; background: #0284c7; border-color: #0284c7; color: #fff;">
+                      <button type="submit" class="btn-primarys" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; background: #0284c7; border-color: #0284c7; color: #fff; white-space: nowrap;">
                         <i class="fa-solid fa-rotate-right"></i> ACC Naskah
                       </button>
                     </form>
@@ -686,7 +732,7 @@ $error_messages = flashs::gets('error');
         </h3>
       </div>
 
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -717,7 +763,7 @@ $error_messages = flashs::gets('error');
                 </span>
               </td>
               <td style="text-align: right;">
-                <a href="../facultiess/details.php?codes=<?= htmlspecialchars($fac['code']); ?>" target="_blank" class="btn-primarys" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; background: #f1f5f9; color: var(--text-titles); box-shadow: none; border: 1px solid var(--border-colors);">
+                <a href="../facultiess/details.php?codes=<?= htmlspecialchars($fac['code']); ?>" target="_blank" class="btn-primarys" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; background: #f1f5f9; color: var(--text-titles); box-shadow: none; border: 1px solid var(--border-colors); white-space: nowrap;">
                   <i class="fa-solid fa-arrow-up-right-from-square"></i> Kunjungi Portal
                 </a>
               </td>
@@ -736,7 +782,7 @@ $error_messages = flashs::gets('error');
         </h3>
       </div>
 
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -772,14 +818,14 @@ $error_messages = flashs::gets('error');
 
     <!-- PANEL 5: LOG AKTIVITAS & UNDUHAN -->
     <div id="panel_logs" class="table-cards" style="display: none;">
-      <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center;">
+      <div style="padding: 1.25rem 1.5rem; background: #fafcfe; border-bottom: 1px solid var(--border-colors); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-titles); margin: 0;">
           <i class="fa-solid fa-clock-rotate-left" style="color: var(--teal-primarys);"></i> Audit Trail: Riwayat Unduhan Karya Ilmiah
         </h3>
         <span style="font-size: 0.82rem; color: var(--text-mutes);">15 Catatan Terkini</span>
       </div>
 
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -825,6 +871,13 @@ $error_messages = flashs::gets('error');
   </main>
 
   <script>
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) {
+        drawer.classList.toggle('opens');
+      }
+    }
+
     function switch_admin_panel(panel_id) {
       const panels = ['users', 'payments', 'faculties', 'types', 'logs'];
       panels.forEach(p => {

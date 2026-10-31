@@ -8,3 +8,4 @@
 ALTER TABLE paymentss 
 ADD COLUMN IF NOT EXISTS admin_notes TEXT NULL AFTER proof_file,
 ADD COLUMN IF NOT EXISTS verified_by INT NULL AFTER admin_notes;
+

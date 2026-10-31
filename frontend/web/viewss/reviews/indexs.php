@@ -1,8 +1,8 @@
 <?php
 /**
  * indexs.php
- * dashboard kurasi karya ilmiah untuk kurator dan super admin
- * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
+ * Dashboard kurasi karya ilmiah untuk Kurator dan Super Admin
+ * Seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
 require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
@@ -15,7 +15,7 @@ require_once dirname(__DIR__, 4) . '/backend/apps/helperss/csrfs.php';
 
 sessions::starts();
 
-// pastikan peran kurator atau admin
+// Pastikan peran kurator atau admin
 $user_roles = sessions::gets('user_roles');
 if (!in_array($user_roles, ['curator', 'admin'])) {
     flashs::sets_error('Akses ditolak. Halaman ini khusus untuk Kurator atau Administrator Repositori.');
@@ -31,7 +31,7 @@ $prodi_filters = !empty($_GET['prodis']) ? (int)$_GET['prodis'] : null;
 
 $work_models = new workss();
 
-// proses review jika ada form post aksi kurator
+// Proses review jika ada form post aksi kurator
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $review_controllers = new review_controllers();
     $review_controllers->process_reviews($_POST);
@@ -45,13 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ambil data metrik statistik editorial
+// Ambil data metrik statistik editorial
 $metric_counts = $work_models->get_curator_metric_counts();
 
-// ambil daftar karya terfilter
+// Ambil daftar karya terfilter
 $curation_workss = $work_models->get_for_curators($status_filters, $search_querys, $prodi_filters);
 
-// ambil daftar program studi untuk dropdown filter
+// Ambil daftar program studi untuk dropdown filter
 $prodi_models = new study_programss();
 $prodi_options = $prodi_models->get_all_actives();
 
@@ -63,9 +63,9 @@ $error_messages = flashs::gets('error');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Kurasi & Dewan Editorial — LENTERA Universitas Madura</title>
-  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
-  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
+  <title>Dashboard Kurasi & Dewan Editorial — Lentera Universitas Madura</title>
+  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.2">
+  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -87,7 +87,7 @@ $error_messages = flashs::gets('error');
       margin-bottom: 2rem;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(15, 76, 92, 0.2);
+      box-shadow: 0 10px 25px rgba(15, 76, 92, 0.18);
     }
     .curator-headers::after {
       content: '';
@@ -96,14 +96,14 @@ $error_messages = flashs::gets('error');
       top: -20px;
       width: 240px;
       height: 240px;
-      background: radial-gradient(circle, rgba(251, 139, 36, 0.18) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(217, 119, 6, 0.18) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
     }
     .metric-grids {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.15rem;
       margin-bottom: 2rem;
     }
     .metric-cards {
@@ -111,7 +111,7 @@ $error_messages = flashs::gets('error');
       border: 1px solid var(--border-colors);
       border-radius: var(--radius-mediums);
       padding: 1.35rem 1.25rem;
-      box-shadow: var(--shadow-smalls);
+      box-shadow: 0 2px 8px rgba(15, 76, 92, 0.04);
       display: flex;
       align-items: center;
       gap: 1.1rem;
@@ -119,7 +119,7 @@ $error_messages = flashs::gets('error');
       text-decoration: none;
     }
     .metric-cards:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: var(--shadow-mediums);
       border-color: var(--teal-primarys);
     }
@@ -131,17 +131,18 @@ $error_messages = flashs::gets('error');
       align-items: center;
       justify-content: center;
       font-size: 1.3rem;
+      flex-shrink: 0;
     }
     .metric-info .metric-numbers {
-      font-size: 1.7rem;
+      font-size: 1.65rem;
       font-weight: 800;
       color: var(--text-titles);
       line-height: 1.1;
     }
     .metric-info .metric-titles {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-bodys);
-      font-weight: 600;
+      font-weight: 700;
       margin-top: 0.25rem;
       text-transform: uppercase;
       letter-spacing: 0.3px;
@@ -164,9 +165,9 @@ $error_messages = flashs::gets('error');
       flex-wrap: wrap;
     }
     .tab-items {
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 0.95rem;
       border-radius: var(--radius-fulls);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 700;
       text-decoration: none;
       color: var(--text-bodys);
@@ -197,7 +198,7 @@ $error_messages = flashs::gets('error');
       border-radius: var(--radius-larges);
       overflow: hidden;
       border: 1px solid var(--border-colors);
-      box-shadow: var(--shadow-mediums);
+      box-shadow: 0 4px 16px rgba(15, 76, 92, 0.05);
     }
     .custom-tables {
       width: 100%;
@@ -206,7 +207,7 @@ $error_messages = flashs::gets('error');
     .custom-tables th {
       background: #f8fafc;
       padding: 1.1rem 1.25rem;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 800;
       color: var(--text-titles);
       border-bottom: 2px solid var(--border-colors);
@@ -215,9 +216,9 @@ $error_messages = flashs::gets('error');
       text-align: left;
     }
     .custom-tables td {
-      padding: 1.25rem;
+      padding: 1.2rem 1.25rem;
       border-bottom: 1px solid var(--border-colors);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       vertical-align: top;
     }
     .custom-tables tbody tr:hover {
@@ -277,6 +278,7 @@ $error_messages = flashs::gets('error');
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      gap: 1rem;
     }
     .modal-body-scrolls {
       padding: 1.75rem;
@@ -288,10 +290,11 @@ $error_messages = flashs::gets('error');
       border-bottom: 2px solid #f1f5f9;
       margin-bottom: 1.5rem;
       gap: 1.5rem;
+      flex-wrap: wrap;
     }
     .modal-nav-links {
       padding-bottom: 0.65rem;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--text-mutes);
       border-bottom: 3px solid transparent;
@@ -311,33 +314,87 @@ $error_messages = flashs::gets('error');
       padding: 1.1rem;
       margin-bottom: 1.25rem;
     }
+    @media (max-width: 768px) {
+      .page-containers {
+        padding: 0 1rem;
+        margin: 1.5rem auto 3rem;
+      }
+      .curator-headers {
+        padding: 1.75rem 1.25rem;
+      }
+      .metric-grids {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      .filter-bars {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+    @media (max-width: 480px) {
+      .metric-grids {
+        grid-template-columns: 1fr;
+      }
+      .modal-overlays {
+        padding: 0.75rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top App Navigation -->
-  <header style="background: #ffffff; border-bottom: 1px solid var(--border-colors); padding: 0.85rem 0;">
-    <div class="page-containers" style="margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-      <a href="../../indexs.php" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal-primarys), var(--teal-darks)); border-radius: var(--radius-smalls); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem;">
-          <i class="fa-solid fa-fire-flame-curved"></i>
-        </div>
+  <!-- Navigasi Atas Responsif -->
+  <header class="nav-containers">
+    <div class="nav-wrappers">
+      <a href="../../indexs.php" class="logo-links">
+        <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span style="font-size: 1.25rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</span>
-          <span style="display: block; font-size: 0.68rem; font-weight: 700; color: var(--gold-accents); text-transform: uppercase;">universitas madura</span>
+          <span class="logo-texts">Lentera</span>
+          <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
 
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <div style="text-align: right;">
-          <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
-          <span style="font-size: 0.74rem; background: rgba(15, 76, 92, 0.1); color: var(--teal-primarys); font-weight: 800; padding: 0.15rem 0.5rem; border-radius: var(--radius-fulls); text-transform: uppercase;">
+      <!-- Desktop Nav -->
+      <nav class="nav-links-wrappers" style="display: flex; align-items: center; gap: 1rem;">
+        <div style="text-align: right; margin-right: 0.5rem;">
+          <div style="font-size: 0.86rem; font-weight: 800; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
+          <span style="font-size: 0.72rem; background: rgba(15, 76, 92, 0.1); color: var(--teal-primarys); font-weight: 800; padding: 0.15rem 0.5rem; border-radius: var(--radius-fulls); text-transform: uppercase;">
             <i class="fa-solid fa-feather-pointed"></i> <?= htmlspecialchars($user_roles); ?>
           </span>
         </div>
-        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Portal Publik</a>
-        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.45rem 1rem; font-size: 0.82rem;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda</a>
+        <a href="../workss/indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+        <?php if ($user_roles === 'admin'): ?>
+          <a href="../admins/indexs.php" class="nav-items-links" style="color: #be185d;"><i class="fa-solid fa-crown"></i> Admin</a>
+        <?php endif; ?>
+        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.45rem 1rem; font-size: 0.84rem;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </a>
+      </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Buka Menu Navigasi">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="nav-mobile-drawers" id="mobile_drawer">
+      <div style="padding: 0.5rem 0 1rem; border-bottom: 1px solid #e2e8f0; margin-bottom: 0.5rem;">
+        <div style="font-weight: 800; color: var(--text-titles);"><?= htmlspecialchars($user_names); ?></div>
+        <span style="font-size: 0.75rem; background: rgba(15, 76, 92, 0.1); color: var(--teal-primarys); font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 999px;">
+          PERAN: <?= strtoupper($user_roles); ?>
+        </span>
       </div>
+      <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda Utama</a>
+      <a href="indexs.php" class="nav-items-links"><i class="fa-solid fa-gavel"></i> Antrean Kurasi</a>
+      <a href="../workss/indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+      <?php if ($user_roles === 'admin'): ?>
+        <a href="../admins/indexs.php" class="nav-items-links"><i class="fa-solid fa-crown"></i> Panel Admin</a>
+      <?php endif; ?>
+      <a href="../auths/logouts.php" class="btn-logins" style="display: inline-flex; justify-content: center; margin-top: 0.5rem;">
+        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+      </a>
     </div>
   </header>
 
@@ -345,11 +402,11 @@ $error_messages = flashs::gets('error');
     <!-- Hero / Curator Welcome Banner -->
     <div class="curator-headers">
       <div style="max-width: 800px; position: relative; z-index: 1;">
-        <span style="background: rgba(251, 139, 36, 0.25); color: #ffd166; font-size: 0.76rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: var(--radius-fulls); text-transform: uppercase; letter-spacing: 0.5px;">
+        <span style="background: rgba(217, 119, 6, 0.25); color: #ffd166; font-size: 0.76rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: var(--radius-fulls); text-transform: uppercase; letter-spacing: 0.5px;">
           <i class="fa-solid fa-stamp"></i> Editorial Management System
         </span>
-        <h1 style="font-size: 1.9rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">Portal Kurasi & Dewan Editorial</h1>
-        <p style="color: #e2e8f0; font-size: 0.95rem; margin-top: 0.4rem; line-height: 1.5;">
+        <h1 style="font-size: 1.85rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">Portal Kurasi & Dewan Editorial</h1>
+        <p style="color: #e2e8f0; font-size: 0.92rem; margin-top: 0.4rem; line-height: 1.5;">
           Periksa orisinalitas naskah, telaah format sitasi dan metodologi ilmiah, lalu berikan keputusan penerbitan untuk repositori resmi Universitas Madura.
         </p>
       </div>
@@ -357,14 +414,14 @@ $error_messages = flashs::gets('error');
 
     <?php if (!empty($success_messages)): ?>
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-check" style="font-size: 1.2rem;"></i>
+        <i class="fa-solid fa-circle-check" style="font-size: 1.2rem; flex-shrink: 0;"></i>
         <span style="font-weight: 600;"><?= htmlspecialchars($success_messages); ?></span>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($error_messages)): ?>
       <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2rem;"></i>
+        <i class="fa-solid fa-circle-exclamation" style="font-size: 1.2rem; flex-shrink: 0;"></i>
         <span style="font-weight: 600;"><?= htmlspecialchars($error_messages); ?></span>
       </div>
     <?php endif; ?>
@@ -387,7 +444,7 @@ $error_messages = flashs::gets('error');
         </div>
         <div class="metric-info">
           <div class="metric-numbers"><?= $metric_counts['submitted']; ?></div>
-          <div class="metric-titles">Perlu Telaah (Submitted)</div>
+          <div class="metric-titles">Perlu Telaah</div>
         </div>
       </a>
 
@@ -417,7 +474,7 @@ $error_messages = flashs::gets('error');
         </div>
         <div class="metric-info">
           <div class="metric-numbers"><?= $metric_counts['waiting_payment']; ?></div>
-          <div class="metric-titles">Menunggu Bayar (APC)</div>
+          <div class="metric-titles">Menunggu Bayar</div>
         </div>
       </a>
 
@@ -452,7 +509,7 @@ $error_messages = flashs::gets('error');
           <span class="tab-badge"><?= $metric_counts['revision']; ?></span>
         </a>
         <a href="indexs.php?statuss=waiting_payment<?= $search_querys ? '&qs=' . urlencode($search_querys) : ''; ?>" class="tab-items <?= $status_filters === 'waiting_payment' ? 'actives' : ''; ?>">
-          <span>Menunggu Bayar (APC)</span>
+          <span>Menunggu Bayar</span>
           <span class="tab-badge"><?= $metric_counts['waiting_payment']; ?></span>
         </a>
         <a href="indexs.php?statuss=published<?= $search_querys ? '&qs=' . urlencode($search_querys) : ''; ?>" class="tab-items <?= $status_filters === 'published' ? 'actives' : ''; ?>">
@@ -465,14 +522,14 @@ $error_messages = flashs::gets('error');
         </a>
       </div>
 
-      <!-- Quick Search & Prodi Filter Form -->
-      <form action="indexs.php" method="GET" style="display: flex; gap: 0.6rem; align-items: center;">
+      <!-- Quick Search Form -->
+      <form action="indexs.php" method="GET" style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
         <?php if (!empty($status_filters)): ?>
           <input type="hidden" name="statuss" value="<?= htmlspecialchars($status_filters); ?>">
         <?php endif; ?>
 
-        <div style="position: relative;">
-          <input type="text" name="qs" placeholder="Cari judul atau nama penulis..." value="<?= htmlspecialchars($search_querys); ?>" style="padding: 0.45rem 0.85rem 0.45rem 2rem; font-size: 0.85rem; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls); outline: none; width: 220px;">
+        <div style="position: relative; flex: 1;">
+          <input type="text" name="qs" placeholder="Cari judul atau nama penulis..." value="<?= htmlspecialchars($search_querys); ?>" style="padding: 0.45rem 0.85rem 0.45rem 2rem; font-size: 0.85rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); outline: none; width: 220px; box-sizing: border-box;">
           <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-mutes); font-size: 0.8rem;"></i>
         </div>
 
@@ -499,7 +556,7 @@ $error_messages = flashs::gets('error');
         <a href="indexs.php" class="btn-primarys" style="font-size: 0.88rem;">Tampilkan Semua Naskah</a>
       </div>
       <?php else: ?>
-      <div style="overflow-x: auto;">
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
         <table class="custom-tables">
           <thead>
             <tr>
@@ -507,7 +564,7 @@ $error_messages = flashs::gets('error');
               <th>Judul Naskah Ilmiah</th>
               <th>Penulis & Program Studi</th>
               <th>Status Editorial</th>
-              <th>Berkas Naskah (Galley)</th>
+              <th>Berkas Naskah</th>
               <th style="text-align: right;">Aksi Kurasi</th>
             </tr>
           </thead>
@@ -565,7 +622,7 @@ $error_messages = flashs::gets('error');
               </td>
               <td>
                 <?php if (!empty($works['file_path'])): ?>
-                  <a href="../workss/downloads.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #e0f2fe; color: #0369a1; box-shadow: none; border: 1px solid #bae6fd;">
+                  <a href="../workss/downloads.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; background: #e0f2fe; color: #0369a1; box-shadow: none; border: 1px solid #bae6fd; white-space: nowrap;">
                     <i class="fa-solid fa-file-pdf"></i> Galley PDF (v<?= htmlspecialchars($works['file_version'] ?? 1); ?>)
                   </a>
                 <?php else: ?>
@@ -573,7 +630,7 @@ $error_messages = flashs::gets('error');
                 <?php endif; ?>
               </td>
               <td style="text-align: right;">
-                <button type="button" class="btn-primarys btn-golds" style="padding: 0.45rem 0.95rem; font-size: 0.84rem;" onclick='open_curation_workspace(<?= json_encode([
+                <button type="button" class="btn-primarys btn-golds" style="padding: 0.45rem 0.95rem; font-size: 0.84rem; white-space: nowrap;" onclick='open_curation_workspace(<?= json_encode([
                   "id"          => $works["id"],
                   "title"       => $works["title"],
                   "abstract"    => $works["abstract"] ?? "Belum ada abstrak.",
@@ -613,7 +670,7 @@ $error_messages = flashs::gets('error');
             Penulis: <strong id="modal_author_label"></strong> (<span id="modal_prodi_label"></span>)
           </div>
         </div>
-        <button type="button" onclick="close_curation_modal()" style="background: none; border: none; font-size: 1.4rem; color: var(--text-mutes); cursor: pointer; padding: 0.2rem;">
+        <button type="button" onclick="close_curation_modal()" style="background: none; border: none; font-size: 1.4rem; color: var(--text-mutes); cursor: pointer; padding: 0.2rem;" aria-label="Tutup Jendela Modal">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -644,7 +701,7 @@ $error_messages = flashs::gets('error');
               <label style="display: block; font-weight: 700; font-size: 0.9rem; color: var(--text-titles); margin-bottom: 0.5rem;">
                 Keputusan Kurator / Dewan Editor <span style="color: #ef4444;">*</span>
               </label>
-              <select name="actions" id="modal_select_action" required style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); font-size: 0.92rem; outline: none;">
+              <select name="actions" id="modal_select_action" required style="width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); font-size: 0.92rem; outline: none; background: #ffffff;">
                 <option value="">-- Pilih Keputusan Dewan Editorial --</option>
                 <option value="acc_payment">💳 ACC Kelayakan Naskah (Minta Penulis Bayar APC & Auto-Publish)</option>
                 <option value="approve">✅ Setujui & Terbitkan Langsung (Bypass Pembayaran)</option>
@@ -653,7 +710,7 @@ $error_messages = flashs::gets('error');
                 <option value="reject">❌ Tolak Naskah (Decline Submission)</option>
               </select>
               <div style="font-size: 0.8rem; color: var(--text-mutes); margin-top: 0.35rem;">
-                Pilih <strong>ACC Kelayakan</strong> agar penulis menerima notifikasi tagihan APC dan naskah otomatis terbit seketika pembayaran dikonfirmasi.
+                Pilih <strong>ACC Kelayakan</strong> agar penulis menerima notifikasi tagihan APC dan naskah otomatis terbit seketika pembayaran diverifikasi admin.
               </div>
             </div>
 
@@ -661,7 +718,7 @@ $error_messages = flashs::gets('error');
               <label style="display: block; font-weight: 700; font-size: 0.9rem; color: var(--text-titles); margin-bottom: 0.5rem;">
                 Catatan Telaah Kurator (Peer Review Feedback / Editorial Notes) <span style="color: #ef4444;">*</span>
               </label>
-              <textarea name="comments" id="modal_textarea_comments" rows="5" required style="width: 100%; padding: 0.85rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); font-family: inherit; font-size: 0.92rem; line-height: 1.5; outline: none;" placeholder="Tuliskan evaluasi metodologi, catatan format IEEE/APA, perbaikan yang diperlukan, atau apresiasi kelayakan naskah..."></textarea>
+              <textarea name="comments" id="modal_textarea_comments" rows="5" required style="width: 100%; padding: 0.85rem; border: 1.5px solid var(--border-colors); border-radius: var(--radius-smalls); font-family: inherit; font-size: 0.92rem; line-height: 1.5; outline: none; box-sizing: border-box;" placeholder="Tuliskan evaluasi metodologi, catatan format IEEE/APA, perbaikan yang diperlukan, atau apresiasi kelayakan naskah..."></textarea>
             </div>
 
             <div style="display: flex; gap: 0.85rem; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-colors); padding-top: 1.25rem;">
@@ -676,17 +733,17 @@ $error_messages = flashs::gets('error');
         <!-- SUB-TAB 2: METADATA & ABSTRAK -->
         <div id="subtab_metadata" style="display: none;">
           <div class="meta-box-panels">
-            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin-bottom: 0.5rem;">
+            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin: 0 0 0.5rem;">
               <i class="fa-solid fa-align-left"></i> Abstrak Penelitian
             </h4>
             <p id="modal_abstract_text" style="font-size: 0.92rem; line-height: 1.6; color: var(--text-titles); margin: 0; text-align: justify;"></p>
           </div>
 
           <div class="meta-box-panels">
-            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin-bottom: 0.5rem;">
+            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin: 0 0 0.5rem;">
               <i class="fa-solid fa-building-columns"></i> Departemen & Fakultas
             </h4>
-            <div style="font-size: 0.9rem; color: var(--text-titles);">
+            <div style="font-size: 0.9rem; color: var(--text-titles); line-height: 1.6;">
               Fakultas: <strong id="modal_faculty_text"></strong><br>
               Program Studi: <strong id="modal_prodi_text"></strong>
             </div>
@@ -696,7 +753,7 @@ $error_messages = flashs::gets('error');
         <!-- SUB-TAB 3: BERKAS & ALUR NASKAH -->
         <div id="subtab_files" style="display: none;">
           <div class="meta-box-panels">
-            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin-bottom: 0.75rem;">
+            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin: 0 0 0.75rem;">
               <i class="fa-solid fa-file-pdf"></i> Dokumen Naskah Ilmiah (Galley)
             </h4>
             <div id="modal_download_container">
@@ -705,8 +762,8 @@ $error_messages = flashs::gets('error');
           </div>
 
           <div class="meta-box-panels">
-            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin-bottom: 0.5rem;">
-              <i class="fa-solid fa-shield-halved"></i> Standar Kurasi LENTERA Universitas Madura
+            <h4 style="font-size: 0.86rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; margin: 0 0 0.5rem;">
+              <i class="fa-solid fa-shield-halved"></i> Standar Kurasi Lentera Universitas Madura
             </h4>
             <ul style="font-size: 0.85rem; color: var(--text-bodys); line-height: 1.6; padding-left: 1.25rem; margin: 0;">
               <li>Pemeriksaan tingkat kemiripan naskah (Similarity index maks. 25%).</li>
@@ -721,6 +778,13 @@ $error_messages = flashs::gets('error');
   </div>
 
   <script>
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) {
+        drawer.classList.toggle('opens');
+      }
+    }
+
     function open_curation_workspace(data) {
       document.getElementById('modal_input_work_id').value = data.id;
       document.getElementById('modal_type_pill').textContent = data.type_name;
@@ -735,7 +799,7 @@ $error_messages = flashs::gets('error');
       const dl_box = document.getElementById('modal_download_container');
       if (data.has_file) {
         dl_box.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 0.85rem 1rem; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls);">
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 0.85rem 1rem; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls); flex-wrap: wrap; gap: 0.75rem;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <i class="fa-solid fa-file-pdf" style="font-size: 1.8rem; color: #dc2626;"></i>
               <div>
@@ -749,7 +813,7 @@ $error_messages = flashs::gets('error');
           </div>
         `;
       } else {
-        dl_box.innerHTML = '<p style="color: var(--text-mutes); font-size: 0.85rem;">Tidak ada dokumen terlampir pada naskah ini.</p>';
+        dl_box.innerHTML = '<p style="color: var(--text-mutes); font-size: 0.85rem; margin: 0;">Tidak ada dokumen terlampir pada naskah ini.</p>';
       }
 
       // reset tab to decision

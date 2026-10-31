@@ -1,9 +1,9 @@
 <?php
 /**
  * payments.php
- * halaman pembayaran biaya publikasi (apc) dengan qr code qris/dana
- * alur pemisahan wewenang: penulis kirim bukti, admin verifikasi & publish
- * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
+ * Halaman pembayaran biaya publikasi (APC) dengan QR Code QRIS/DANA
+ * Alur pemisahan wewenang: Penulis kirim bukti, Admin verifikasi & publish
+ * Seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
 require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
 
                     if ($submitted) {
-                        flashs::sets_success('Bukti pembayaran Anda berhasil dikirim ke Admin Repositori LENTERA! Mohon menunggu verifikasi sebelum naskah otomatis aktif ke publik.');
+                        flashs::sets_success('Bukti pembayaran Anda berhasil dikirim ke Admin Repositori Lentera! Mohon menunggu verifikasi sebelum naskah otomatis aktif ke publik.');
                         header('Location: payments.php?ids=' . $work_ids);
                         exit;
                     } else {
@@ -125,13 +125,13 @@ $is_rejected = ($invoices['status'] === 'rejected');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pembayaran Publikasi (APC) — LENTERA Universitas Madura</title>
-  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
-  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
+  <title>Pembayaran Publikasi (APC) — Lentera Universitas Madura</title>
+  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.2">
+  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .page-containers {
-      max-width: 980px;
+      max-width: 1040px;
       margin: 2.5rem auto 5rem;
       padding: 0 1.5rem;
     }
@@ -145,13 +145,13 @@ $is_rejected = ($invoices['status'] === 'rejected');
       border: 1px solid var(--border-colors);
       border-radius: var(--radius-larges);
       padding: 2.25rem 2rem;
-      box-shadow: 0 8px 24px rgba(15, 76, 92, 0.08);
+      box-shadow: 0 10px 30px rgba(15, 76, 92, 0.06);
     }
     .qr-showcase-boxes {
       background: #fafcfe;
       border: 2px dashed #cbd5e1;
       border-radius: var(--radius-mediums);
-      padding: 1.75rem;
+      padding: 1.75rem 1.25rem;
       text-align: center;
       margin-bottom: 1.5rem;
     }
@@ -162,19 +162,19 @@ $is_rejected = ($invoices['status'] === 'rejected');
       background: #118eea;
       color: #ffffff;
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       padding: 0.35rem 0.85rem;
       border-radius: var(--radius-fulls);
       margin-bottom: 1rem;
     }
     .qr-image-frames {
-      max-width: 290px;
-      margin: 0 auto 1rem;
+      max-width: 280px;
+      margin: 0 auto 1.25rem;
       background: #ffffff;
-      padding: 6px;
+      padding: 8px;
       border-radius: var(--radius-mediums);
       border: 1px solid #e2e8f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -193,84 +193,102 @@ $is_rejected = ($invoices['status'] === 'rejected');
     }
     .form-groups {
       margin-bottom: 1.25rem;
+      text-align: left;
     }
     .form-labels {
       display: block;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--text-titles);
       margin-bottom: 0.45rem;
     }
     .form-inputs {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.78rem 1rem;
       font-size: 0.92rem;
+      font-family: inherit;
       border: 1.5px solid var(--border-colors);
       border-radius: var(--radius-smalls);
       outline: none;
       transition: var(--transition-fasts);
+      box-sizing: border-box;
+      background-color: #ffffff;
     }
     .form-inputs:focus {
       border-color: var(--teal-primarys);
       box-shadow: 0 0 0 3px rgba(15, 76, 92, 0.12);
     }
+    .alert-acc-boxes, .alert-reviewing-boxes, .alert-rejected-boxes {
+      border-radius: var(--radius-smalls);
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      line-height: 1.5;
+    }
     .alert-acc-boxes {
       background: #f0fdf4;
       border: 1px solid #bbf7d0;
-      border-radius: var(--radius-smalls);
-      padding: 1.25rem;
-      margin-bottom: 1.75rem;
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
     }
     .alert-reviewing-boxes {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
-      border-radius: var(--radius-smalls);
-      padding: 1.25rem;
-      margin-bottom: 1.75rem;
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
     }
     .alert-rejected-boxes {
       background: #fef2f2;
       border: 1px solid #fecaca;
-      border-radius: var(--radius-smalls);
-      padding: 1.25rem;
-      margin-bottom: 1.75rem;
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
     }
-    @media (max-width: 820px) {
+    @media (max-width: 860px) {
       .payment-layout-grids {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+      }
+      .page-containers {
+        padding: 0 1rem;
+        margin: 1.5rem auto 3rem;
+      }
+      .payment-cards {
+        padding: 1.75rem 1.25rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header Navigation -->
-  <header style="background: #ffffff; border-bottom: 1px solid var(--border-colors); padding: 0.85rem 0;">
-    <div class="page-containers" style="margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-      <a href="../../indexs.php" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-        <div style="width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal-primarys), var(--teal-darks)); border-radius: var(--radius-smalls); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem;">
-          <i class="fa-solid fa-fire-flame-curved"></i>
-        </div>
+  <!-- Navigasi Atas Responsif -->
+  <header class="nav-containers">
+    <div class="nav-wrappers">
+      <a href="../../indexs.php" class="logo-links">
+        <div class="logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div>
-          <span style="font-size: 1.25rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</span>
-          <span style="display: block; font-size: 0.68rem; font-weight: 700; color: var(--gold-accents); text-transform: uppercase;">universitas madura</span>
+          <span class="logo-texts">Lentera</span>
+          <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
-      <div>
-        <a href="indexs.php" class="btn-logins" style="font-size: 0.84rem; padding: 0.4rem 0.9rem;">
-          <i class="fa-solid fa-arrow-left"></i> Kembali ke Karya Saya
+
+      <!-- Desktop Nav -->
+      <nav class="nav-links-wrappers" style="display: flex; align-items: center; gap: 1rem;">
+        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda</a>
+        <a href="indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.45rem 1rem; font-size: 0.84rem;">
+          <i class="fa-solid fa-right-from-bracket"></i> Keluar
         </a>
-      </div>
+      </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Buka Menu Navigasi">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="nav-mobile-drawers" id="mobile_drawer">
+      <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-globe"></i> Beranda Utama</a>
+      <a href="indexs.php" class="nav-items-links"><i class="fa-solid fa-table-list"></i> Karya Saya</a>
+      <a href="../auths/logouts.php" class="btn-logins" style="display: inline-flex; justify-content: center; margin-top: 0.5rem;">
+        <i class="fa-solid fa-right-from-bracket"></i> Keluar Akun
+      </a>
     </div>
   </header>
 
@@ -304,7 +322,7 @@ $is_rejected = ($invoices['status'] === 'rejected');
             Bukti Pembayaran Sedang Diverifikasi oleh Admin Repositori
           </h3>
           <p style="font-size: 0.88rem; color: #075985; line-height: 1.5; margin: 0;">
-            Anda telah berhasil mengunggah bukti pembayaran dengan nomor referensi <strong><?= htmlspecialchars($invoices['reference_number'] ?? '-'); ?></strong> atas nama <strong><?= htmlspecialchars($invoices['sender_name'] ?? '-'); ?></strong>. Administrator Repositori LENTERA sedang memeriksa rekening. Naskah Anda akan otomatis terbit begitu diverifikasi.
+            Anda telah berhasil mengunggah bukti pembayaran dengan nomor referensi <strong><?= htmlspecialchars($invoices['reference_number'] ?? '-'); ?></strong> atas nama <strong><?= htmlspecialchars($invoices['sender_name'] ?? '-'); ?></strong>. Administrator Repositori Lentera sedang memeriksa mutasi rekening. Naskah Anda akan otomatis terbit begitu diverifikasi.
           </p>
         </div>
       </div>
@@ -327,14 +345,14 @@ $is_rejected = ($invoices['status'] === 'rejected');
 
     <?php if (!empty($success_messages)): ?>
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-check"></i>
+        <i class="fa-solid fa-circle-check" style="flex-shrink: 0;"></i>
         <span><?= htmlspecialchars($success_messages); ?></span>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($error_messages)): ?>
       <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 1rem 1.25rem; border-radius: var(--radius-smalls); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-        <i class="fa-solid fa-circle-exclamation"></i>
+        <i class="fa-solid fa-circle-exclamation" style="flex-shrink: 0;"></i>
         <span><?= htmlspecialchars($error_messages); ?></span>
       </div>
     <?php endif; ?>
@@ -345,12 +363,12 @@ $is_rejected = ($invoices['status'] === 'rejected');
         <span style="font-size: 0.78rem; font-weight: 800; color: var(--gold-accents); text-transform: uppercase; letter-spacing: 0.5px;">
           <i class="fa-solid fa-qrcode"></i> QRIS & DANA Payment Gateway
         </span>
-        <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-titles); margin-top: 0.35rem; margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-titles); margin-top: 0.35rem; margin-bottom: 1.25rem; letter-spacing: -0.4px;">
           Biaya Publikasi Naskah Ilmiah (APC)
         </h2>
 
         <div style="background: #f8fafc; border: 1px solid var(--border-colors); border-radius: var(--radius-smalls); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.78rem; color: var(--text-mutes); text-transform: uppercase; font-weight: 700;">Naskah yang Diterbitkan:</div>
+          <div style="font-size: 0.76rem; color: var(--text-mutes); text-transform: uppercase; font-weight: 700;">Naskah yang Diterbitkan:</div>
           <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-titles); margin-top: 0.25rem; line-height: 1.4;">
             <?= htmlspecialchars($works['title']); ?>
           </div>
@@ -379,10 +397,10 @@ $is_rejected = ($invoices['status'] === 'rejected');
           </div>
 
           <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" download="QRIS_DhesMart_LENTERA.jpeg" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
+            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" download="QRIS_DhesMart_LENTERA.jpeg" class="btn-logins" style="font-size: 0.78rem; padding: 0.45rem 0.85rem; text-decoration: none; border: 1px solid var(--border-colors);">
               <i class="fa-solid fa-download"></i> Simpan Gambar QRIS
             </a>
-            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" target="_blank" class="btn-logins" style="font-size: 0.78rem; padding: 0.4rem 0.8rem; text-decoration: none; border: 1px solid var(--border-colors);">
+            <a href="/lentera/frontend/web/imgs/qris_lentera.jpeg" target="_blank" class="btn-logins" style="font-size: 0.78rem; padding: 0.45rem 0.85rem; text-decoration: none; border: 1px solid var(--border-colors);">
               <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Penuh
             </a>
           </div>
@@ -399,13 +417,13 @@ $is_rejected = ($invoices['status'] === 'rejected');
           <h4 style="font-size: 0.88rem; font-weight: 800; color: var(--text-titles); text-transform: uppercase; margin-bottom: 0.75rem;">
             <i class="fa-solid fa-circle-info" style="color: var(--teal-primarys);"></i> Petunjuk Pembayaran:
           </h4>
-          <div style="background: #f1f5f9; padding: 1rem 1.15rem; border-radius: var(--radius-smalls); font-size: 0.86rem; line-height: 1.6; color: var(--text-titles);">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem 1.15rem; border-radius: var(--radius-smalls); font-size: 0.86rem; line-height: 1.6; color: var(--text-titles);">
             <div style="margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px dashed #cbd5e1;">
               <strong style="color: #be123c;"><i class="fa-solid fa-qrcode"></i> Metode 1 — Scan QRIS (Semua E-Wallet & Bank):</strong><br>
               • Buka <strong>DANA, BCA, BRI, Mandiri, BNI, GoPay, OVO, ShopeePay</strong> atau m-Banking Anda.<br>
               • Arahkan scanner ke QRIS <strong>Dhes Mart</strong> di atas.<br>
               • <em>Jika menggunakan HP yang sama:</em> Klik tombol <strong>"Simpan Gambar QRIS"</strong> di atas, lalu pada scanner DANA klik ikon <strong>Galeri Foto</strong> untuk memilih gambar QRIS.<br>
-              • Masukkan nominal tepat <strong>Rp 150.000</strong> dan selesaikan pembayaran.
+              • Masukkan nominal tepat <strong>Rp 150.000</strong> dan selesaikan transaksi.
             </div>
 
             <div>
@@ -414,7 +432,7 @@ $is_rejected = ($invoices['status'] === 'rejected');
               • Masukkan Nomor DANA Penerima:
               <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.4rem 0;">
                 <span id="dana_number_display" style="font-family: monospace; font-size: 1.05rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 0.25rem 0.65rem; border-radius: 4px;">087849264452</span>
-                <button type="button" onclick="copy_dana_number()" id="btn_copy_dana" style="background: #0284c7; color: #fff; border: none; padding: 0.35rem 0.8rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                <button type="button" onclick="copy_dana_number()" id="btn_copy_dana" style="background: #0284c7; color: #fff; border: none; padding: 0.4rem 0.85rem; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
                   <i class="fa-regular fa-copy"></i> Salin Nomor
                 </button>
               </div>
@@ -430,7 +448,7 @@ $is_rejected = ($invoices['status'] === 'rejected');
         <span style="font-size: 0.78rem; font-weight: 800; color: var(--teal-primarys); text-transform: uppercase; letter-spacing: 0.5px;">
           <i class="fa-solid fa-receipt"></i> Konfirmasi Pembayaran APC
         </span>
-        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-titles); margin-top: 0.35rem; margin-bottom: 0.5rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-titles); margin-top: 0.35rem; margin-bottom: 0.5rem; letter-spacing: -0.3px;">
           Kirim Bukti Pembayaran
         </h3>
         <p style="font-size: 0.84rem; color: var(--text-bodys); line-height: 1.5; margin-bottom: 1.25rem;">
@@ -501,7 +519,7 @@ $is_rejected = ($invoices['status'] === 'rejected');
         </form>
 
         <div style="margin-top: 1.5rem; text-align: center;">
-          <a href="indexs.php" style="color: var(--text-mutes); font-size: 0.84rem; text-decoration: none;">
+          <a href="indexs.php" style="color: var(--text-mutes); font-size: 0.84rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard Karya Saya
           </a>
         </div>
@@ -510,6 +528,13 @@ $is_rejected = ($invoices['status'] === 'rejected');
   </main>
 
   <script>
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) {
+        drawer.classList.toggle('opens');
+      }
+    }
+
     function copy_dana_number() {
       const num = '087849264452';
       navigator.clipboard.writeText(num).then(() => {

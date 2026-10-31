@@ -464,7 +464,24 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
           <a href="/lentera/viewss/auths/logins.php" class="btn-logins">Masuk</a>
           <a href="/lentera/viewss/auths/registers.php" class="btn-primarys">Daftar</a>
         <?php endif; ?>
+        <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Menu navigasi">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile_drawer" class="nav-mobile-drawers">
+      <a href="/lentera/indexs.php"><i class="fa-solid fa-house"></i> Beranda</a>
+      <a href="/lentera/viewss/searchs/indexs.php"><i class="fa-solid fa-magnifying-glass"></i> Katalog Pencarian</a>
+      <a href="/lentera/viewss/statisticss/indexs.php"><i class="fa-solid fa-chart-pie"></i> Statistik & Akreditasi</a>
+      <a href="/lentera/indexs.php#fakultass" style="color: var(--teal-primarys);"><i class="fa-solid fa-building-columns"></i> Fakultas</a>
+      <?php if (sessions::hass('user_ids')): ?>
+        <a href="/lentera/viewss/workss/indexs.php"><i class="fa-solid fa-folder-open"></i> Dashboard Karya Saya</a>
+        <a href="/lentera/viewss/auths/logouts.php" style="color: #b91c1c;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+      <?php else: ?>
+        <a href="/lentera/viewss/auths/logins.php"><i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem</a>
+      <?php endif; ?>
     </div>
   </header>
 
@@ -832,6 +849,12 @@ $current_scopes = $faculty_scopes[$faculty_codes] ?? 'Pusat publikasi ilmiah, ri
     </div>
   </footer>
 
+  <script>
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) drawer.classList.toggle('opens');
+    }
+  </script>
   <script src="/lentera/jss/apps.js?vs=1.0.1"></script>
 </body>
 </html>

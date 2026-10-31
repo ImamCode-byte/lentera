@@ -13,7 +13,7 @@ require_once dirname(__DIR__, 4) . '/backend/apps/helperss/flashs.php';
 sessions::starts();
 
 if (!sessions::hass('user_ids')) {
-    flashs::sets_error('silakan masuk terlebih dahulu.');
+    flashs::sets_error('Silakan masuk terlebih dahulu untuk mengakses dashboard penulis.');
     header('Location: ../auths/logins.php');
     exit;
 }
@@ -25,6 +25,21 @@ $user_roles = sessions::gets('user_roles');
 $work_models = new workss();
 $author_workss = $work_models->get_by_authors($author_ids);
 
+// Hitung metrik naskah penulis
+$cnt_total = count($author_workss);
+$cnt_in_review = 0;
+$cnt_revision = 0;
+$cnt_payment = 0;
+$cnt_published = 0;
+
+foreach ($author_workss as $aw) {
+    $st = $aw['status'] ?? '';
+    if ($st === 'submitted' || $st === 'in_review') $cnt_in_review++;
+    elseif ($st === 'revision') $cnt_revision++;
+    elseif ($st === 'waiting_payment') $cnt_payment++;
+    elseif ($st === 'published') $cnt_published++;
+}
+
 $success_messages = flashs::gets('success');
 $error_messages = flashs::gets('error');
 ?>
@@ -33,14 +48,14 @@ $error_messages = flashs::gets('error');
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Karya Saya — Lentera Universitas Madura</title>
-  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
-  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
+  <title>Dashboard Karya Saya — Lentera Universitas Madura</title>
+  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.2">
+  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .page-containers {
-      max-width: 1140px;
-      margin: 2.5rem auto 5rem;
+      max-width: 1200px;
+      margin: 2rem auto 5rem;
       padding: 0 1.5rem;
     }
     .dashboard-headers {
@@ -51,83 +66,21 @@ $error_messages = flashs::gets('error');
       flex-wrap: wrap;
       gap: 1rem;
     }
-    .table-cards {
-      background: #ffffff;
-      border: 1px solid var(--border-colors);
-      border-radius: var(--radius-larges);
-      overflow: hidden;
-      box-shadow: var(--shadow-mediums);
-    }
-    .custom-tables {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    .custom-tables th {
-      background: #f8fafc;
-      padding: 1rem 1.25rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-titles);
-      border-bottom: 1px solid var(--border-colors);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .custom-tables td {
-      padding: 1.25rem;
-      border-bottom: 1px solid var(--border-colors);
-      font-size: 0.92rem;
-      vertical-align: top;
-    }
-    .custom-tables tr:last-child td {
-      border-bottom: none;
-    }
-    .custom-tables tr:hover {
-      background: #fdfdfd;
-    }
-    .badge-statuss {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: var(--radius-fulls);
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .status-submitteds { background: #e0f2fe; color: #0284c7; }
-    .status-in_reviews { background: #fef9c3; color: #a16207; }
-    .status-revisions  { background: #ffedd5; color: #c2410c; }
-    .status-waiting_payments { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-    .status-publisheds { background: #dcfce7; color: #15803d; }
-    .status-rejecteds  { background: #fee2e2; color: #b91c1c; }
-    .status-drafts     { background: #f1f5f9; color: #64748b; }
-    
     .curator-note-boxes {
-      margin-top: 0.75rem;
+      margin-top: 0.65rem;
       background: #fff7ed;
       border-left: 3px solid #f97316;
-      padding: 0.6rem 0.85rem;
+      padding: 0.55rem 0.8rem;
       border-radius: 4px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: #9a3412;
+      line-height: 1.5;
     }
-    .alert-boxes {
-      padding: 0.85rem 1.1rem;
-      border-radius: var(--radius-smalls);
-      font-size: 0.88rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .alert-successs { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
-    .alert-errors   { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
   </style>
 </head>
 <body>
 
-  <!-- navigasi atas -->
+  <!-- Navigasi Terpadu -->
   <header class="nav-containers">
     <div class="nav-wrappers">
       <a href="../../indexs.php" class="logo-links">
@@ -137,181 +90,278 @@ $error_messages = flashs::gets('error');
           <span class="logo-subtexts">universitas madura</span>
         </div>
       </a>
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <span style="font-size: 0.9rem; font-weight: 700; color: var(--teal-primarys);">
-          <i class="fa-solid fa-user-pen"></i> <?= htmlspecialchars($user_names); ?>
+
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 0.88rem; font-weight: 700; color: var(--teal-primarys); display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-circle-user"></i> <?= htmlspecialchars($user_names); ?>
         </span>
         <?php if (in_array($user_roles, ['curator', 'admin'])): ?>
-          <a href="../reviews/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">Antrean Kurator</a>
+          <a href="../reviews/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+            <i class="fa-solid fa-feather-pointed"></i> Kurator
+          </a>
         <?php endif; ?>
         <?php if ($user_roles === 'admin'): ?>
-          <a href="../admins/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.9rem; font-size: 0.82rem; background: #831843;">Panel Admin</a>
+          <a href="../admins/indexs.php" class="btn-primarys" style="padding: 0.4rem 0.85rem; font-size: 0.8rem; background: #831843;">
+            <i class="fa-solid fa-crown"></i> Admin
+          </a>
         <?php endif; ?>
-        <a href="../../indexs.php" class="nav-items-links">Beranda</a>
-        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">Keluar</a>
+        <a href="../../indexs.php" class="nav-items-links"><i class="fa-solid fa-house"></i> Beranda</a>
+        <a href="../auths/logouts.php" class="btn-logins" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;" title="Keluar">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+        <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Menu navigasi">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile_drawer" class="nav-mobile-drawers">
+      <a href="../../indexs.php"><i class="fa-solid fa-house"></i> Beranda Repositori</a>
+      <a href="../searchs/indexs.php"><i class="fa-solid fa-magnifying-glass"></i> Katalog Pencarian</a>
+      <a href="indexs.php" style="color: var(--teal-primarys);"><i class="fa-solid fa-folder-open"></i> Dashboard Karya Saya</a>
+      <a href="creates.php" style="color: var(--gold-accents);"><i class="fa-solid fa-plus"></i> Unggah Karya Baru</a>
+      <?php if (in_array($user_roles, ['curator', 'admin'])): ?>
+        <a href="../reviews/indexs.php"><i class="fa-solid fa-feather-pointed"></i> Panel Kurator</a>
+      <?php endif; ?>
+      <?php if ($user_roles === 'admin'): ?>
+        <a href="../admins/indexs.php"><i class="fa-solid fa-crown"></i> Panel Admin Repositori</a>
+      <?php endif; ?>
+      <a href="../auths/logouts.php" style="color: #b91c1c;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
     </div>
   </header>
 
   <main class="page-containers">
     <div class="dashboard-headers">
       <div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-titles); letter-spacing: -0.5px;">Dashboard Karya Saya</h1>
-        <p style="color: var(--text-bodys); font-size: 0.92rem;">Kelola naskah ilmiah, pantau alur verifikasi kurator, biaya publikasi, dan unggah revisi.</p>
+        <span style="font-size: 0.78rem; font-weight: 800; color: var(--gold-accents); text-transform: uppercase; letter-spacing: 0.5px;">
+          <i class="fa-solid fa-id-badge"></i> Ruang Kerja Penulis
+        </span>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-titles); letter-spacing: -0.5px; margin-top: 0.25rem;">
+          Dashboard Karya Saya
+        </h1>
+        <p style="color: var(--text-bodys); font-size: 0.92rem; margin-top: 0.25rem;">
+          Pantau status naskah ilmiah Anda, periksa catatan telaah kurator, selesaikan tagihan publikasi, dan unggah revisi.
+        </p>
       </div>
-      <a href="creates.php" class="btn-primarys btn-golds" style="padding: 0.75rem 1.4rem;">
+      <a href="creates.php" class="btn-primarys btn-golds" style="padding: 0.65rem 1.4rem;">
         <i class="fa-solid fa-plus"></i> Unggah Karya Baru
       </a>
     </div>
 
     <?php if (!empty($success_messages)): ?>
-    <div class="alert-boxes alert-successs">
-      <i class="fa-solid fa-circle-check"></i>
-      <span><?= htmlspecialchars($success_messages); ?></span>
-    </div>
+      <div class="alert-boxes alert-successs">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><?= htmlspecialchars($success_messages); ?></span>
+      </div>
     <?php endif; ?>
 
     <?php if (!empty($error_messages)): ?>
-    <div class="alert-boxes alert-errors">
-      <i class="fa-solid fa-circle-exclamation"></i>
-      <span><?= htmlspecialchars($error_messages); ?></span>
-    </div>
+      <div class="alert-boxes alert-errors">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span><?= htmlspecialchars($error_messages); ?></span>
+      </div>
     <?php endif; ?>
 
+    <!-- Kartu Metrik Penulis -->
+    <div class="metric-grids">
+      <div class="metric-cards">
+        <div class="metric-icons" style="background: var(--teal-lights); color: var(--teal-primarys);">
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <div>
+          <div class="metric-numbers"><?= $cnt_total; ?></div>
+          <div class="metric-titles">Total Karya Diajukan</div>
+        </div>
+      </div>
+
+      <div class="metric-cards">
+        <div class="metric-icons" style="background: #e0f2fe; color: #0284c7;">
+          <i class="fa-solid fa-feather-pointed"></i>
+        </div>
+        <div>
+          <div class="metric-numbers"><?= $cnt_in_review; ?></div>
+          <div class="metric-titles">Dalam Telaah Kurator</div>
+        </div>
+      </div>
+
+      <div class="metric-cards">
+        <div class="metric-icons" style="background: #ffedd5; color: #c2410c;">
+          <i class="fa-solid fa-pen-ruler"></i>
+        </div>
+        <div>
+          <div class="metric-numbers" style="color: <?= $cnt_revision > 0 ? '#c2410c' : 'inherit'; ?>;"><?= $cnt_revision; ?></div>
+          <div class="metric-titles">Perlu Tindakan Revisi</div>
+        </div>
+      </div>
+
+      <div class="metric-cards">
+        <div class="metric-icons" style="background: #fef3c7; color: #b45309;">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div>
+          <div class="metric-numbers" style="color: <?= $cnt_payment > 0 ? '#b45309' : 'inherit'; ?>;"><?= $cnt_payment; ?></div>
+          <div class="metric-titles">Menunggu Bayar APC</div>
+        </div>
+      </div>
+
+      <div class="metric-cards">
+        <div class="metric-icons" style="background: #dcfce7; color: #15803d;">
+          <i class="fa-solid fa-check-double"></i>
+        </div>
+        <div>
+          <div class="metric-numbers"><?= $cnt_published; ?></div>
+          <div class="metric-titles">Resmi Terbit Publik</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Daftar Karya -->
     <div class="table-cards">
       <?php if (empty($author_workss)): ?>
-      <div style="text-align: center; padding: 4rem 1.5rem;">
-        <div style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"><i class="fa-solid fa-folder-open"></i></div>
-        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-titles); margin-bottom: 0.5rem;">Belum Ada Karya yang Diunggah</h3>
-        <p style="color: var(--text-bodys); font-size: 0.9rem; margin-bottom: 1.5rem;">Mulai publikasikan skripsi, tesis, atau artikel jurnal Anda sekarang.</p>
-        <a href="creates.php" class="btn-primarys"><i class="fa-solid fa-plus"></i> Unggah Naskah Pertama</a>
-      </div>
+        <div class="empty-state-boxes">
+          <div class="empty-state-icons"><i class="fa-solid fa-folder-open"></i></div>
+          <h3 class="empty-state-titles">Belum Ada Karya yang Diunggah</h3>
+          <p class="empty-state-descriptions">
+            Mulai publikasikan skripsi, tesis, artikel jurnal, atau laporan penelitian Anda untuk diarsipkan secara digital di LENTERA Universitas Madura.
+          </p>
+          <a href="creates.php" class="btn-primarys btn-golds" style="padding: 0.65rem 1.5rem;">
+            <i class="fa-solid fa-plus"></i> Unggah Naskah Pertama Anda
+          </a>
+        </div>
       <?php else: ?>
-      <div style="overflow-x: auto;">
-        <table class="custom-tables">
-          <thead>
-            <tr>
-              <th>Judul Naskah</th>
-              <th>Jenis & Prodi</th>
-              <th>Status Kurasi & Publikasi</th>
-              <th>Versi Dokumen</th>
-              <th>Statistik</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($author_workss as $works): ?>
-            <tr>
-              <td style="max-width: 320px;">
-                <strong style="color: var(--text-titles); font-size: 0.98rem; display: block; line-height: 1.4;">
-                  <?= htmlspecialchars($works['title']); ?>
-                </strong>
-                <span style="font-size: 0.78rem; color: var(--text-mutes); margin-top: 0.35rem; display: block;">
-                  Diajukan: <?= date('d M Y, H:i', strtotime($works['created_at'])); ?> WIB
-                </span>
+        <div class="table-responsives">
+          <table class="custom-tables">
+            <thead>
+              <tr>
+                <th>Judul Naskah</th>
+                <th>Jenis & Prodi</th>
+                <th>Status Kurasi & Publikasi</th>
+                <th>Versi Berkas</th>
+                <th>Statistik Pembaca</th>
+                <th style="text-align: right; min-width: 140px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($author_workss as $works): ?>
+              <tr>
+                <td style="max-width: 320px;">
+                  <strong style="color: var(--text-titles); font-size: 0.95rem; display: block; line-height: 1.4;">
+                    <?= htmlspecialchars($works['title']); ?>
+                  </strong>
+                  <span style="font-size: 0.76rem; color: var(--text-mutes); margin-top: 0.35rem; display: block;">
+                    Diajukan: <?= date('d M Y, H:i', strtotime($works['created_at'])); ?> WIB
+                  </span>
 
-                <?php if (!empty($works['last_review_comments']) && in_array($works['status'], ['revision', 'rejected'])): ?>
-                <div class="curator-note-boxes">
-                  <strong>Catatan Kurator:</strong> <?= htmlspecialchars($works['last_review_comments']); ?>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($works['status'] === 'waiting_payment' && ($works['payment_status'] ?? '') === 'rejected' && !empty($works['payment_admin_notes'])): ?>
-                <div style="margin-top: 0.5rem; background: #fef2f2; border-left: 3px solid #ef4444; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.8rem; color: #991b1b;">
-                  <strong>Catatan Penolakan Admin:</strong> <?= htmlspecialchars($works['payment_admin_notes']); ?>
-                </div>
-                <?php endif; ?>
-              </td>
-              <td>
-                <span class="type-badges" style="font-size: 0.72rem;"><?= htmlspecialchars($works['type_name']); ?></span>
-                <div style="font-size: 0.8rem; color: var(--text-bodys); margin-top: 0.3rem;">
-                  <?= htmlspecialchars($works['prodi_name']); ?> (<?= htmlspecialchars($works['year']); ?>)
-                </div>
-              </td>
-              <td>
-                <?php if ($works['status'] === 'waiting_payment'): ?>
-                  <?php if (($works['payment_status'] ?? '') === 'pending' && !empty($works['payment_proof_file'])): ?>
-                    <span class="badge-statuss" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;">
-                      <i class="fa-solid fa-hourglass-half"></i> Verifikasi Admin
-                    </span>
-                    <div style="font-size: 0.74rem; color: var(--text-mutes); margin-top: 0.25rem;">
-                      Bukti transfer sudah dikirim
-                    </div>
-                  <?php elseif (($works['payment_status'] ?? '') === 'rejected'): ?>
-                    <span class="badge-statuss" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
-                      <i class="fa-solid fa-triangle-exclamation"></i> Bukti Ditolak
-                    </span>
-                    <div style="font-size: 0.74rem; color: #b91c1c; margin-top: 0.25rem;">
-                      Perlu unggah ulang bukti sah
-                    </div>
-                  <?php else: ?>
-                    <span class="badge-statuss status-waiting_payments">
-                      <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> ACC — Bayar APC
-                    </span>
-                    <div style="font-size: 0.74rem; color: #b45309; margin-top: 0.25rem;">
-                      Menunggu pembayaran
+                  <?php if (!empty($works['last_review_comments']) && in_array($works['status'], ['revision', 'rejected'])): ?>
+                    <div class="curator-note-boxes">
+                      <strong>Catatan Kurator:</strong> <?= htmlspecialchars($works['last_review_comments']); ?>
                     </div>
                   <?php endif; ?>
-                <?php else: ?>
-                  <?php
-                    $badge_class = 'status-' . htmlspecialchars($works['status']) . 's';
-                    $status_labels = [
-                      'submitted'        => 'Menunggu Kurator',
-                      'in_review'        => 'Sedang Diperiksa',
-                      'revision'         => 'Perlu Revisi',
-                      'published'        => 'Diterbitkan',
-                      'rejected'         => 'Ditolak',
-                      'draft'            => 'Draf',
-                    ];
-                  ?>
-                  <span class="badge-statuss <?= $badge_class; ?>">
-                    <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i>
-                    <?= $status_labels[$works['status']] ?? htmlspecialchars($works['status']); ?>
-                  </span>
-                <?php endif; ?>
-              </td>
-              <td>
-                <span style="font-weight: 700; color: var(--teal-primarys);">v<?= htmlspecialchars($works['file_version'] ?? 1); ?></span>
-                <div style="font-size: 0.78rem; color: var(--text-mutes);"><?= htmlspecialchars($works['original_name'] ?? 'dokumen.pdf'); ?></div>
-              </td>
-              <td style="font-size: 0.85rem; color: var(--text-bodys);">
-                <div><i class="fa-regular fa-eye"></i> <?= number_format($works['view_count']); ?> dibaca</div>
-                <div style="margin-top: 0.2rem;"><i class="fa-solid fa-download"></i> <?= number_format($works['download_count']); ?> diunduh</div>
-              </td>
-              <td>
-                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+
+                  <?php if ($works['status'] === 'waiting_payment' && ($works['payment_status'] ?? '') === 'rejected' && !empty($works['payment_admin_notes'])): ?>
+                    <div style="margin-top: 0.5rem; background: #fef2f2; border-left: 3px solid #ef4444; padding: 0.45rem 0.65rem; border-radius: 4px; font-size: 0.78rem; color: #991b1b;">
+                      <strong>Catatan Penolakan Admin:</strong> <?= htmlspecialchars($works['payment_admin_notes']); ?>
+                    </div>
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <span class="type-badges"><?= htmlspecialchars($works['type_name']); ?></span>
+                  <div style="font-size: 0.8rem; color: var(--text-bodys); margin-top: 0.35rem; font-weight: 600;">
+                    <?= htmlspecialchars($works['prodi_name']); ?> (<?= htmlspecialchars($works['year']); ?>)
+                  </div>
+                </td>
+                <td>
                   <?php if ($works['status'] === 'waiting_payment'): ?>
                     <?php if (($works['payment_status'] ?? '') === 'pending' && !empty($works['payment_proof_file'])): ?>
-                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; background: #0284c7; color: #fff; text-align: center;">
-                        <i class="fa-solid fa-receipt"></i> Cek Pembayaran
-                      </a>
+                      <span class="badge-statuss" style="background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd;">
+                        <i class="fa-solid fa-hourglass-half"></i> Verifikasi Admin
+                      </span>
+                      <div style="font-size: 0.74rem; color: var(--text-mutes); margin-top: 0.25rem;">
+                        Struk pembayaran dikirim
+                      </div>
                     <?php elseif (($works['payment_status'] ?? '') === 'rejected'): ?>
-                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 800; background: #dc2626; color: #fff; text-align: center;">
-                        <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Ulang
-                      </a>
+                      <span class="badge-statuss" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Bukti Ditolak
+                      </span>
+                      <div style="font-size: 0.74rem; color: #b91c1c; margin-top: 0.25rem;">
+                        Unggah bukti sah
+                      </div>
                     <?php else: ?>
-                      <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 800; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); text-align: center;">
-                        <i class="fa-solid fa-qrcode"></i> Bayar APC
+                      <span class="badge-statuss status-waiting_payments">
+                        <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> ACC — Bayar APC
+                      </span>
+                      <div style="font-size: 0.74rem; color: #b45309; margin-top: 0.25rem;">
+                        Menunggu pelunasan
+                      </div>
+                    <?php endif; ?>
+                  <?php else: ?>
+                    <?php
+                      $badge_class = 'status-' . htmlspecialchars($works['status']) . 's';
+                      $status_labels = [
+                        'submitted'        => 'Menunggu Kurator',
+                        'in_review'        => 'Sedang Diperiksa',
+                        'revision'         => 'Perlu Revisi',
+                        'published'        => 'Diterbitkan',
+                        'rejected'         => 'Ditolak',
+                        'draft'            => 'Draf',
+                      ];
+                    ?>
+                    <span class="badge-statuss <?= $badge_class; ?>">
+                      <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i>
+                      <?= $status_labels[$works['status']] ?? htmlspecialchars($works['status']); ?>
+                    </span>
+                  <?php endif; ?>
+                </td>
+                <td>
+                  <span style="font-weight: 700; color: var(--teal-primarys);">v<?= htmlspecialchars($works['file_version'] ?? 1); ?></span>
+                  <div style="font-size: 0.78rem; color: var(--text-mutes);"><?= htmlspecialchars($works['original_name'] ?? 'dokumen.pdf'); ?></div>
+                </td>
+                <td style="font-size: 0.85rem; color: var(--text-bodys);">
+                  <div><i class="fa-regular fa-eye" style="color: var(--text-mutes);"></i> <?= number_format($works['view_count']); ?> dilihat</div>
+                  <div style="margin-top: 0.2rem;"><i class="fa-solid fa-download" style="color: #15803d;"></i> <?= number_format($works['download_count']); ?> diunduh</div>
+                </td>
+                <td style="text-align: right;">
+                  <div style="display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-end;">
+                    <?php if ($works['status'] === 'waiting_payment'): ?>
+                      <?php if (($works['payment_status'] ?? '') === 'pending' && !empty($works['payment_proof_file'])): ?>
+                        <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="min-height: 32px; padding: 0.35rem 0.75rem; font-size: 0.78rem; background: #0284c7; color: #fff;">
+                          <i class="fa-solid fa-receipt"></i> Cek Pembayaran
+                        </a>
+                      <?php elseif (($works['payment_status'] ?? '') === 'rejected'): ?>
+                        <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="min-height: 32px; padding: 0.35rem 0.75rem; font-size: 0.78rem; background: #dc2626; color: #fff;">
+                          <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Ulang
+                        </a>
+                      <?php else: ?>
+                        <a href="payments.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="min-height: 32px; padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+                          <i class="fa-solid fa-qrcode"></i> Bayar APC
+                        </a>
+                      <?php endif; ?>
+                    <?php elseif ($works['status'] === 'revision'): ?>
+                      <a href="revises.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="min-height: 32px; padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Revisi
                       </a>
                     <?php endif; ?>
-                  <?php elseif ($works['status'] === 'revision'): ?>
-                    <a href="revises.php?ids=<?= $works['id']; ?>" class="btn-primarys btn-golds" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; text-align: center;">
-                      <i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah Revisi
-                    </a>
-                  <?php endif; ?>
 
-                  <a href="details.php?ids=<?= $works['id']; ?>" class="btn-primarys" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; background: var(--teal-lights); color: var(--teal-primarys); box-shadow: none; text-align: center;">
-                    <i class="fa-solid fa-circle-info"></i> Pratinjau
-                  </a>
-                </div>
-              </td>
-            </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
+                    <a href="details.php?ids=<?= $works['id']; ?>" class="btn-logins" style="min-height: 32px; padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+                      <i class="fa-solid fa-circle-info"></i> Detail
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
       <?php endif; ?>
     </div>
   </main>
+
+  <script>
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) drawer.classList.toggle('opens');
+    }
+  </script>
 </body>
 </html>

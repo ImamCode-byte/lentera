@@ -1,8 +1,8 @@
 <?php
 /**
  * registers.php
- * halaman registrasi penulis dan civitas akademika repositori lenteras
- * seluruh fungsi dan variabel konsisten lowercase dan akhiran s
+ * Halaman registrasi penulis dan civitas akademika repositori Lentera Universitas Madura
+ * Seluruh fungsi dan variabel konsisten lowercase dan akhiran s
  */
 
 require_once dirname(__DIR__, 4) . '/backend/configs/apps.php';
@@ -13,7 +13,7 @@ require_once dirname(__DIR__, 4) . '/backend/apps/helperss/csrfs.php';
 
 sessions::starts();
 
-// jika sudah login, alihkan ke beranda
+// Jika sudah login, alihkan ke beranda
 if (sessions::hass('user_ids')) {
     header('Location: ../../indexs.php');
     exit;
@@ -21,7 +21,7 @@ if (sessions::hass('user_ids')) {
 
 $error_messages = '';
 
-// ambil daftar prodi dari database dan kelompokkan berdasarkan fakultas
+// Ambil daftar prodi dari database dan kelompokkan berdasarkan fakultas
 $grouped_prodis = [];
 try {
     $db_conns = databases::get_connections();
@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrasi Akun Baru — Lentera Universitas Madura</title>
-  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.1">
-  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.1">
+  <link rel="stylesheet" href="/lentera/csss/styles.css?vs=1.0.2">
+  <link rel="stylesheet" href="../../csss/styles.css?vs=1.0.2">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .auth-containers {
@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       align-items: center;
       justify-content: center;
       padding: 3rem 1.25rem;
-      background: radial-gradient(circle at 10% 20%, rgba(15, 76, 92, 0.08) 0%, transparent 40%),
-                  radial-gradient(circle at 90% 80%, rgba(251, 139, 36, 0.08) 0%, transparent 40%),
-                  #f8fafc;
+      background: radial-gradient(circle at 10% 20%, rgba(15, 76, 92, 0.08) 0%, transparent 45%),
+                  radial-gradient(circle at 90% 80%, rgba(217, 119, 6, 0.08) 0%, transparent 45%),
+                  var(--surface-canvass, #f8fafc);
     }
     .auth-cards {
       width: 100%;
@@ -80,30 +80,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       border: 1px solid var(--border-colors);
       border-radius: var(--radius-larges);
       padding: 2.75rem 2.5rem;
-      box-shadow: 0 10px 30px rgba(15, 76, 92, 0.08);
+      box-shadow: 0 12px 36px rgba(15, 76, 92, 0.08);
     }
     .auth-headers {
       text-align: center;
       margin-bottom: 2.25rem;
     }
     .auth-logo-icons {
-      width: 54px;
-      height: 54px;
-      margin: 0 auto 1rem;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 0.85rem;
       background: linear-gradient(135deg, var(--teal-primarys), var(--teal-darks));
       border-radius: var(--radius-mediums);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      font-size: 1.6rem;
-      box-shadow: 0 6px 16px rgba(15, 76, 92, 0.25);
+      font-size: 1.55rem;
+      box-shadow: 0 6px 16px rgba(15, 76, 92, 0.22);
     }
     .section-titles {
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      font-size: 0.98rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: var(--teal-primarys);
       border-bottom: 2px solid #f1f5f9;
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .form-labels {
       display: block;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--text-titles);
       margin-bottom: 0.45rem;
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .form-inputs, .form-selects, .form-textareas {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.78rem 1rem;
       font-size: 0.92rem;
       font-family: inherit;
       border: 1.5px solid var(--border-colors);
@@ -145,6 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       transition: var(--transition-fasts);
       background-color: #ffffff;
       color: var(--text-titles);
+      box-sizing: border-box;
     }
     .form-inputs:focus, .form-selects:focus, .form-textareas:focus {
       border-color: var(--teal-primarys);
@@ -155,13 +156,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .password-toggles {
       position: absolute;
-      right: 1rem;
+      right: 0.5rem;
       top: 50%;
       transform: translateY(-50%);
       background: transparent;
       border: none;
       color: var(--text-mutes);
       cursor: pointer;
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .password-toggles:hover {
+      color: var(--text-titles);
     }
     .form-hints {
       font-size: 0.78rem;
@@ -210,6 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: #b91c1c;
+      line-height: 1.45;
     }
     .auth-footers {
       text-align: center;
@@ -227,7 +238,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     @media (max-width: 650px) {
       .auth-cards {
-        padding: 1.75rem 1.25rem;
+        padding: 2rem 1.25rem;
+        border-radius: var(--radius-mediums);
       }
       .form-grid-twos {
         grid-template-columns: 1fr;
@@ -241,18 +253,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="auth-containers">
     <div class="auth-cards">
       <div class="auth-headers">
-        <a href="../../indexs.php" style="text-decoration: none;">
+        <a href="../../indexs.php" style="text-decoration: none; display: inline-block;">
           <div class="auth-logo-icons"><i class="fa-solid fa-fire-flame-curved"></i></div>
-          <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px;">Lentera</h1>
-          <p style="font-size: 0.8rem; color: var(--gold-accents); font-weight: 700; text-transform: uppercase;">universitas madura</p>
+          <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--teal-primarys); letter-spacing: -0.5px; margin: 0;">Lentera</h1>
+          <p style="font-size: 0.76rem; color: var(--gold-accents); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin: 0.2rem 0 0;">universitas madura</p>
         </a>
-        <h2 style="font-size: 1.3rem; font-weight: 800; margin-top: 1.2rem; color: var(--text-titles);">Pendaftaran Akun Peneliti & Penulis</h2>
-        <p style="font-size: 0.88rem; color: var(--text-bodys);">Lengkapi data diri akademik Anda untuk memulai pengajuan karya ilmiah di Lentera</p>
+        <h2 style="font-size: 1.25rem; font-weight: 800; margin-top: 1.35rem; margin-bottom: 0.25rem; color: var(--text-titles);">Pendaftaran Akun Peneliti & Penulis</h2>
+        <p style="font-size: 0.86rem; color: var(--text-bodys); margin: 0;">Lengkapi data diri akademik Anda untuk memulai pengajuan karya ilmiah di Lentera</p>
       </div>
 
       <?php if (!empty($error_messages)): ?>
       <div class="alert-boxes">
-        <i class="fa-solid fa-circle-exclamation"></i>
+        <i class="fa-solid fa-circle-exclamation" style="flex-shrink: 0;"></i>
         <span><?= htmlspecialchars($error_messages); ?></span>
       </div>
       <?php endif; ?>
@@ -353,7 +365,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-groups">
             <label class="form-labels" for="passwords">Kata Sandi (Min. 8 Karakter) <span class="required-stars">*</span></label>
             <div class="password-wrappers">
-              <input type="password" id="passwords" name="passwords" class="form-inputs" placeholder="Minimal 8 karakter" required>
+              <input type="password" id="passwords" name="passwords" class="form-inputs" style="padding-right: 3rem;" placeholder="Minimal 8 karakter" required>
               <button type="button" class="password-toggles" id="toggle_reg_passwords" aria-label="Lihat kata sandi">
                 <i class="fa-regular fa-eye"></i>
               </button>
@@ -362,7 +374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="form-groups">
             <label class="form-labels" for="password_confirms">Ulangi Kata Sandi <span class="required-stars">*</span></label>
             <div class="password-wrappers">
-              <input type="password" id="password_confirms" name="password_confirms" class="form-inputs" placeholder="Ketik ulang kata sandi" required>
+              <input type="password" id="password_confirms" name="password_confirms" class="form-inputs" style="padding-right: 3rem;" placeholder="Ketik ulang kata sandi" required>
               <button type="button" class="password-toggles" id="toggle_reg_confirms" aria-label="Lihat konfirmasi kata sandi">
                 <i class="fa-regular fa-eye"></i>
               </button>
@@ -408,7 +420,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="auth-footers">
         <p>Sudah memiliki akun terdaftar? <a href="logins.php" class="auth-links">Masuk di sini</a></p>
         <div style="margin-top: 1.25rem;">
-          <a href="../../indexs.php" style="color: var(--text-mutes); text-decoration: none; font-size: 0.88rem;">
+          <a href="../../indexs.php" style="color: var(--text-mutes); text-decoration: none; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 0.4rem;">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda Utama
           </a>
         </div>

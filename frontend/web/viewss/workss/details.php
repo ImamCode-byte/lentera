@@ -193,7 +193,24 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
           <a href="/lentera/viewss/auths/logins.php" class="btn-logins">Masuk</a>
           <a href="/lentera/viewss/auths/registers.php" class="btn-primarys">Unggah Karya</a>
         <?php endif; ?>
+        <button type="button" class="nav-mobile-toggles" onclick="toggle_mobile_drawer()" aria-label="Menu navigasi">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile_drawer" class="nav-mobile-drawers">
+      <a href="/lentera/indexs.php"><i class="fa-solid fa-house"></i> Beranda</a>
+      <a href="/lentera/viewss/searchs/indexs.php"><i class="fa-solid fa-magnifying-glass"></i> Katalog Pencarian</a>
+      <a href="/lentera/viewss/statisticss/indexs.php"><i class="fa-solid fa-chart-pie"></i> Statistik & Akreditasi</a>
+      <a href="/lentera/viewss/facultiess/details.php?codes=<?= urlencode($works['faculty_code'] ?? 'FT'); ?>" style="color: var(--teal-primarys);"><i class="fa-solid fa-building-columns"></i> <?= htmlspecialchars($works['faculty_name']); ?></a>
+      <?php if (sessions::hass('user_ids')): ?>
+        <a href="/lentera/viewss/workss/indexs.php"><i class="fa-solid fa-folder-open"></i> Dashboard Karya Saya</a>
+        <a href="/lentera/viewss/auths/logouts.php" style="color: #b91c1c;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+      <?php else: ?>
+        <a href="/lentera/viewss/auths/logins.php"><i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem</a>
+      <?php endif; ?>
     </div>
   </header>
 
@@ -476,6 +493,10 @@ $citation_bibtexs = "@misc{{$bibtex_keys},\n  author = {{$author_names}},\n  tit
           label.innerText = 'Salin Sitasi';
         }, 2500);
       });
+    }
+    function toggle_mobile_drawer() {
+      const drawer = document.getElementById('mobile_drawer');
+      if (drawer) drawer.classList.toggle('opens');
     }
   </script>
 </body>
