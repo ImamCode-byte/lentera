@@ -1,0 +1,70 @@
+@startuml
+title Activity Diagram — Alur Pengajuan & Kurasi Karya Ilmiah Lentera
+
+|Penulis|
+start
+:Buka Halaman Unggah Karya;
+:Isi Judul, Abstrak & Metadata;
+:Pilih File Naskah (PDF <= 20MB);
+:Submit Formulir;
+
+|Sistem|
+:Validasi CSRF & Input;
+if (Format PDF & Ukuran Valid?) then (Ya)
+  :Enkripsi & Simpan PDF ke uploads/works/;
+  :Simpan Record Karya (Status: submitted);
+else (Tidak)
+  :Tampilkan Pesan Galat;
+  stop
+endif
+
+|Kurator|
+:Buka Dasbor Antrean Kurasi;
+:Pilih Naskah & Tinjau Berkas PDF;
+:Telaah Mutu & Format Akademik;
+
+if (Keputusan Kurator?) then (Approve / Terbit)
+  |Sistem|
+  :Ubah Status ke 'published';
+  :Catat Timestamp published_at;
+  :Naskah Tayang di Katalog Publik;
+elseif (Minta Revisi)
+  |Kurator|
+  :Tulis Catatan Telaah Perbaikan;
+  |Sistem|
+  :Simpan Catatan ke Tabel reviews;
+  :Ubah Status ke 'revision';
+  |Penulis|
+  :Baca Catatan & Unggah Revisi Baru;
+  |Sistem|
+  :Simpan Versi Baru (Status: submitted);
+  detach
+elseif (Menunggu Pembayaran)
+  |Sistem|
+  :Ubah Status ke 'waiting_payment';
+  |Penulis|
+  :Lakukan Pelunasan Biaya Publikasi;
+  :Konfirmasi Pembayaran;
+  |Sistem|
+  :Verifikasi & Auto-Publish;
+else (Tolak / Reject)
+  |Kurator|
+  :Tulis Alasan Penolakan;
+  |Sistem|
+  :Ubah Status ke 'rejected';
+endif
+
+|Publik|
+:Cari Karya via Judul/Penulis;
+:Buka Detail Naskah & Abstrak;
+:Salin Sitasi (APA/IEEE/Harvard);
+:Unduh Berkas PDF Resmi;
+
+|Sistem|
+:Verifikasi Otorisasi Unduh (Published);
+:Catat Log ke download_logs;
+:Increment download_count;
+:Kirimkan Berkas PDF;
+
+stop
+@enduml

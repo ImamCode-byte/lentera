@@ -1,78 +1,94 @@
 # Proposal Proyek Akhir — LENTERA
+## Repositori Karya Tulis Ilmiah Terpadu Akademik Universitas Madura (UNIRA)
 
-## Informasi Proyek
-- **Mata Kuliah:** Pemrograman Berbasis Platform
-- **Topik Proyek:** Repositori & Etalase Karya Ilmiah Terpadu Akademik
-- **Judul Proyek:** LENTERA (*Laman Etalase Karya Tulis Ilmiah Terpadu Akademik*)
-- **Kelompok:** 01
-- **Program Studi / Fakultas:** [ISI_PROGRAM_STUDI] / [ISI_FAKULTAS]
-- **Perguruan Tinggi:** Universitas Madura (UNIRA)
+**Mata Kuliah:** Pemrograman Berbasis Platform  
+**Program Studi:** Teknik Informatika — Fakultas Teknik  
+**Perguruan Tinggi:** Universitas Madura (UNIRA)  
+**Kelompok:** 01 — Kelas TI 6A (2025/2026 Genap)  
+
+| Kolom Sampul | Data Kelompok |
+|---|---|
+| **Judul Sistem** | LENTERA — Laman Etalase Karya Tulis Ilmiah Terpadu Akademik Universitas Madura |
+| **Kelompok / Kelas** | Kelompok 01 — TI [ISI_KELAS] |
+| **Anggota + NIM + Peran** | 1. Imam (2024520030) — Ketua, Backend Lead & Keamanan<br>2. Alvin Hidayat Putra Pratam (2024520050) — Frontend Web Engineer<br>3. Moh. Gilank Alamsyah (2024520052) — Mobile Native Engineer (Flutter)<br>4. Abdul Halim (2024520059) — DB Engineer, QA & Documentation Lead |
+| **Dosen Pengampu** | [ISI_NAMA_DOSEN_PENGAMPU] |
+| **Tahun / Semester** | 2025/2026 Genap |
+| **Tautan Repositori** | `https://github.com/ISI_AKUN/pemrograman-berbasis-platform-kelompok-01-lentera` |
+| **Tautan API / Demo** | `http://localhost/lentera/` (Lokal) / `http://[IP_SERVER]/lentera/` |
 
 ---
 
-## 1. Latar Belakang & Rumusan Masalah
+## BAB I: PENDAHULUAN
 
 ### 1.1 Latar Belakang
-Setiap tahunnya, civitas akademika di lingkungan perguruan tinggi menghasilkan ratusan hingga ribuan karya intelektual yang bernilai tinggi, meliputi skripsi, tesis, jurnal penelitian, laporan magang/kerja praktik, dan laporan pengabdian masyarakat. Seluruh naskah tersebut merepresentasikan memori intelektual dan rekam jejak riset akademik kampus.
 
-Namun dalam praktiknya, pengelolaan karya ilmiah masih menghadapi berbagai kendala klasik:
-1. **Penyimpanan Terfragmentasi**: Karya sering kali hanya tertimbun secara fisik di lemari arsip program studi, tersimpan di flashdisk mahasiswa yang telah lulus, atau tercecer di penyimpanan cloud pribadi masing-masing dosen pembimbing.
-2. **Keterbatasan Akses Referensi**: Mahasiswa tingkat akhir atau peneliti pemula kesulitan menelusuri karya-karya terdahulu yang relevan sebagai rujukan literatur, sehingga terjadi duplikasi topik penelitian yang tidak disengaja.
-3. **Kendala Pelaporan Akreditasi**: Ketika periode evaluasi borang akreditasi program studi tiba, pengelola program studi kelimpungan mengumpulkan data fisik serta bukti keterbacaan publikasi dalam waktu singkat.
-4. **Ketiadaan Sistem Kurasi Terstandar**: Pengunggahan karya secara mandiri tanpa saringan telaah mutu berisiko mempublikasikan naskah yang belum memenuhi standar sitasi atau integritas karya ilmiah.
+Perguruan tinggi merupakan pusat gravitasi intelektual yang menghasilkan luaran akademik berlimpah setiap tahun ajaran, meliputi skripsi program sarjana, tesis program magister, naskah jurnal terakreditasi, laporan kerja praktik, serta laporan pengabdian masyarakat. Karya-karya tersebut adalah aset pengetahuan dan memori institusional civitas akademika yang bernilai strategis bagi kemajuan ilmu pengetahuan dan teknologi.
+
+Dalam kondisi ideal yang diharapkan, seluruh naskah karya ilmiah civitas akademika Universitas Madura (UNIRA) terarsip secara digital, tersusun rapi dalam skema metadata terstandar, melalui gerbang penelaahan kualitas mutu (*curation workflow*), serta dapat ditelusuri dan diakses dengan cepat oleh mahasiswa, dosen, maupun masyarakat luas sebagai referensi riset ilmiah.
+
+Namun pada kenyataannya, kondisi aktual di lapangan menunjukkan bahwa pengelolaan arsip karya ilmiah masih terfragmentasi dan belum terintegrasi secara digital. Ratusan skripsi fisik menumpuk di lemari arsip program studi tanpa keterbacaan yang optimal, sementara file digital naskah hanya tersimpan pada *flashdisk* pribadi mahasiswa yang telah lulus atau tercecer di penyimpanan komputasi awan pribadi dosen pembimbing. Akibatnya, adik tingkat dan peneliti pemula mengalami hambatan besar dalam mencari literatur rujukan terdahulu, sehingga memicu risiko duplikasi topik riset akademik yang tidak disengaja.
+
+Kesenjangan tersebut berdampak nyata saat periode evaluasi akreditasi program studi tiba, di mana staf pengelola fakultas kelimpungan mengumpulkan data fisik luaran penelitian mahasiswa dan rekam jejak pembimbingan dalam tenggat waktu yang sangat sempit. Ketiadaan pencatatan log akses dan statistik unduhan juga membuat kampus kehilangan metrik objektif mengenai karya ilmiah mana yang paling berdampak dan banyak dijadikan referensi. Faktor mendasar dari permasalahan ini adalah belum tersedianya platform repositori digital terpusat yang menjembatani siklus hidup naskah ilmiah kampus dari tahap pengajuan (*submission*), penelaahan mutu kurator (*peer curation*), hingga publikasi bebas (*open access*).
+
+Menjawab urgensi tersebut, diperlukan sebuah platform repositori akademik multiplatform bernama **LENTERA** (*Laman Etalase Karya Tulis Ilmiah Terpadu Akademik*). LENTERA dirancang dengan arsitektur web responsif dan aplikasi mobile native (Flutter) yang menghubungkan tiga penghuni repositori (*The Triad Actors*): Penulis yang mengajukan karya, Kurator yang menjaga mutu telaah, dan Publik yang menelusuri katalog ilmiah kampus secara cepat dan terbuka.
+
+---
 
 ### 1.2 Rumusan Masalah
-1. Bagaimana merancang repositori digital terpadu yang memfasilitasi pengunggahan karya ilmiah dengan metadata terstruktur dan penyimpanan aman?
-2. Bagaimana membangun mekanisme kurasi dan penelaahan bertingkat (*peer editorial review*) sebelum suatu naskah disetujui terbit ke publik?
-3. Bagaimana menyediakan keterbukaan akses pencarian multi-kriteria (berdasarkan judul, kata kunci, abstrak, fakultas, dan program studi) yang dapat diakses secara cepat di peramban web dan aplikasi mobile native?
+
+Berdasarkan latar belakang di atas, rumusan masalah dalam pengembangan sistem Lentera adalah:
+1. **[M-01]** Bagaimana merancang arsitektur basis data relasional dan sistem unggah berkas yang mampu mengamankan penyimpanan dokumen PDF serta mencatat metadata karya secara terstruktur?
+2. **[M-02]** Bagaimana membangun mekanisme penelaahan editorial bertingkat (*curation cycle*) dengan siklus revisi berversi ($v_1, v_2$) sebelum karya ilmiah resmi diterbitkan ke publik?
+3. **[M-03]** Bagaimana mengimplementasikan mesin pencari multi-kriteria berbasis judul, abstrak, penulis, dan fakultas yang responsif pada antarmuka web?
+4. **[M-04]** Bagaimana menyediakan generator sitasi multi-format standar akademik (APA 7th, IEEE, Harvard) untuk mempermudah periset mengutip karya ilmiah?
+5. **[M-05]** Bagaimana merancang antarmuka mobile native Android & iOS (Flutter) dengan integrasi REST API yang tangguh menghadapi kondisi jaringan tanpa internet (*offline handling*)?
 
 ---
 
-## 2. Pengguna Sasaran (Target Audience)
+### 1.3 Solusi Digital (Fitur Web & Mobile — Minimal 12 Fitur per Platform)
 
-Sistem LENTERA berpusat pada tiga aktor utama (*The Triad Actors*):
+Berikut adalah pemetaan solusi digital sistem Lentera yang mencakup **14 Fitur Web** dan **14 Fitur Mobile** serta **4 Role Pengguna** (Penulis, Kurator, Publik, Super Admin):
 
-1. **Penulis (Author — Mahasiswa & Dosen)**
-   - Sasaran: Mahasiswa tingkat sarjana/magister serta dosen peneliti.
-   - Kebutuhan: Mengunggah naskah dan berkas PDF, memantau riwayat status naskah secara transparan, menerima umpan balik/catatan perbaikan dari kurator, dan mengunggah dokumen revisi berversi.
+#### A. Tabel Fitur Web (14 Fitur)
+| ID Fitur | Nama Fitur Web | Menjawab Masalah | MVP / Lanjutan | Pengguna |
+|:---:|---|:---:|:---:|---|
+| **FW-01** | Beranda Etalase & Metrik Koleksi Kampus | M-03 | MVP | Publik, Penulis, Kurator |
+| **FW-02** | Registrasi Mandiri Akun Peneliti/Mahasiswa | M-01 | MVP | Publik / Mahasiswa |
+| **FW-03** | Autentikasi Login Berbasis Peran (RBAC) | M-01 | MVP | Penulis, Kurator, Admin |
+| **FW-04** | Formulir Pengunggahan Naskah & Berkas PDF | M-01 | MVP | Penulis |
+| **FW-05** | Dasbor Karya Penulis & Pelacakan Status | M-02 | MVP | Penulis |
+| **FW-06** | Formulir Unggah Dokumen Revisi Siklus Berversi | M-02 | MVP | Penulis |
+| **FW-07** | Dasbor Kurasi & Antrean Naskah Masuk | M-02 | MVP | Kurator, Admin |
+| **FW-08** | Formulir Keputusan Kurator (Terbit, Revisi, Tolak) | M-02 | MVP | Kurator, Admin |
+| **FW-09** | Portal Repositori Khusus per Fakultas | M-03 | MVP | Publik |
+| **FW-10** | Pencarian Multi-Filter Katalog Ilmiah | M-03 | MVP | Publik |
+| **FW-11** | Halaman Detail Naskah & Generator Sitasi Otomatis | M-04 | MVP | Publik |
+| **FW-12** | Pengunduh PDF Terproteksi dengan Audit Log | M-01 | MVP | Publik, Penulis |
+| **FW-13** | Dasbor Analitik Statistik & Borang Akreditasi | M-01 | Lanjutan | Publik, Kurator, Admin |
+| **FW-14** | Panel Super Admin (Kelola User, Prodi & Log) | M-01 | Lanjutan | Super Admin |
 
-2. **Kurator (Curator — Dewan Editor & Tim Mutu Program Studi)**
-   - Sasaran: Dosen penelaah, pengelola jurnal internal, atau tim jaminan mutu akademik.
-   - Kebutuhan: Dasbor antrean kurasi naskah masuk, fasilitas membaca naskah, pemberian catatan telaah revisi, serta wewenang menerbitkan (*approve*) atau menolak (*reject*) naskah.
-
-3. **Publik (Guest / Readers)**
-   - Sasaran: Mahasiswa, dosen pembimbing, peneliti eksternal, dan masyarakat umum.
-   - Kebutuhan: Melakukan penelusuran katalog karya secara bebas hambatan tanpa kewajiban login, membaca abstrak, menyalin format sitasi otomatis (APA, IEEE, Harvard), dan mengunduh berkas lengkap (PDF).
-
-4. **Super Admin (Pengelola Sistem IT)**
-   - Sasaran: Operator repositori atau staf IT kampus.
-   - Kebutuhan: Manajemen master data (fakultas, program studi, jenis karya), pemantauan log aktivitas unduhan, dan pengawasan metrik kinerja sistem.
-
----
-
-## 3. Ide Solusi & Keunggulan Inovasi
-
-### 3.1 Ide Solusi
-Membangun platform **LENTERA** dengan arsitektur multiplatform:
-- **Backend Berbasis PHP Native MVC**: Ringan, cepat, aman dengan PDO prepared statements dan CSRF protection, serta dilengkapi API endpoints berformat JSON standar.
-- **Frontend Web Responsif**: Menggunakan CSS kustom dan Vanilla JS yang ringan tanpa bloatware, responsif di berbagai resolusi layar ponsel hingga monitor desktop.
-- **Frontend Mobile Native (Flutter)**: Aplikasi Android & iOS untuk mempermudah civitas akademika mencari, membaca abstrak, dan mengunduh referensi secara mobile.
-
-### 3.2 Keunggulan Utama
-- **Siklus Telaah Berversi (Versioned Revision Cycle)**: Revisi naskah tersimpan secara berurutan ($v_1, v_2, \dots$) sehingga riwayat perbaikan terdokumentasi rapi.
-- **Generator Sitasi Otomatis**: Memudahkan periset mengutip karya ilmiah dalam format standar akademik dengan satu klik.
-- **Pencatatan Audit Log Unduhan Realtime**: Setiap unduhan tercatat alamat IP, identitas pengguna, dan waktunya, memberikan analitik akurat bagi keperluan borang akreditasi.
-- **Penyimpanan Berkas Terproteksi**: Direktori berkas PDF naskah dilindungi secara ketat di tingkat web server; unduhan hanya dapat melalui controller resmi yang memverifikasi status publikasi.
+#### B. Tabel Fitur Mobile Native (14 Fitur)
+| ID Fitur | Nama Fitur Mobile | Menjawab Masalah | MVP / Lanjutan | Pengguna |
+|:---:|---|:---:|:---:|---|
+| **FM-01** | Beranda Mobile & Quick Search Bar | M-05 | MVP | Publik |
+| **FM-02** | Chip Filter Cepat Koleksi per Fakultas | M-05 | MVP | Publik |
+| **FM-03** | Pencarian Katalog Realtime Naskah Ilmiah | M-03, M-05 | MVP | Publik |
+| **FM-04** | Filter Dropdown Fakultas di Layar Pencarian | M-03, M-05 | MVP | Publik |
+| **FM-05** | Layar Detail Lengkap Naskah & Abstrak Ilmiah | M-05 | MVP | Publik |
+| **FM-06** | Generator Sitasi Otomatis Multi-Style (APA/IEEE/Harvard) | M-04, M-05 | MVP | Publik |
+| **FM-07** | Salin Format Sitasi ke Clipboard Satu-Sentuhan | M-04, M-05 | MVP | Publik |
+| **FM-08** | Formulir Login Mobile Aman Berbasis REST API | M-01, M-05 | MVP | Penulis, Kurator |
+| **FM-09** | Manajemen Sesi Token (Persistent Secure Storage) | M-01, M-05 | MVP | Penulis, Kurator |
+| **FM-10** | Dasbor Karya Saya (Status Naskah Penulis) | M-02, M-05 | MVP | Penulis |
+| **FM-11** | Badge Status Kurasi Dinamis (Warna & Label Baku) | M-02, M-05 | MVP | Penulis |
+| **FM-12** | Penanganan Status Offline Adaptif & Tombol Retry | M-05 | MVP | Semua Pengguna |
+| **FM-13** | Komponen Empty State & Loading Skeleton | M-05 | MVP | Semua Pengguna |
+| **FM-14** | Tautan Akses Unduhan Berkas PDF Resmi Kampus | M-01, M-05 | Lanjutan | Publik, Penulis |
 
 ---
 
 ## 4. Alasan Pemilihan Topik
 
-1. **Relevansi Nyata dengan Kebutuhan Kampus**: Topik repositori karya ilmiah ini menjawab masalah nyata di Universitas Madura (UNIRA) dalam mendokumentasikan memori intelektual kampus.
-2. **Kesesuaian Capaian Pembelajaran Mata Kuliah**: Mengintegrasikan konsep pemrograman server-side (PHP), client-side interaktif (JavaScript), perancangan basis data relasional (MySQL), keamanan aplikasi web, serta pengembangan multiplatform mobile (Flutter).
-3. **Dampak Berkelanjutan**: Aplikasi ini tidak hanya berhenti sebagai tugas kuliah, namun siap diimplementasikan secara konkret sebagai aset digital akademik perguruan tinggi.
-
----
-
-> [!NOTE]
-> Bagian yang ditandai dengan `[ISI_...]` dapat dilengkapi saat finalisasi dokumen pengumpulan tugas kelompok.
+1. **Relevansi Nyata dengan Kebutuhan Kampus UNIRA**: Repositori karya ilmiah menjawab permasalahan nyata ketersebaran dokumen dan pelaporan akreditasi perguruan tinggi.
+2. **Kesesuaian Capaian Mata Kuliah PBP**: Menerapkan konsep arsitektur MVC server-side, integrasi REST API JSON, database prepared statements, keamanan web standar OWASP, serta pengembangan aplikasi multiplatform modern (Flutter).
+3. **Kesiapan Implementasi Berkelanjutan**: Kode sumber dibangun dengan standar modular tinggi sehingga siap diadopsi secara resmi oleh perpustakaan dan universitas.
