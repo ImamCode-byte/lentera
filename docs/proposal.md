@@ -9,11 +9,11 @@
 | Kolom Sampul | Data Kelompok |
 |---|---|
 | **Judul Sistem** | LENTERA — Laman Etalase Karya Tulis Ilmiah Terpadu Akademik Universitas Madura |
-| **Kelompok / Kelas** | Kelompok 01 — TI [ISI_KELAS] |
-| **Anggota + NIM + Peran** | 1. Imam (2024520030) — Ketua, Backend Lead & Keamanan<br>2. Alvin Hidayat Putra Pratam (2024520050) — Frontend Web Engineer<br>3. Moh. Gilank Alamsyah (2024520052) — Mobile Native Engineer (Flutter)<br>4. Abdul Halim (2024520059) — DB Engineer, QA & Documentation Lead |
-| **Dosen Pengampu** | [ISI_NAMA_DOSEN_PENGAMPU] |
+| **Kelompok / Kelas** | Kelompok 01 — TI 6A (Pagi) |
+| **Anggota + NIM + Peran** | 1. Imam (2024520030) — Ketua, Backend Lead & Keamanan (`imamdhespachito001@gmail.com`)<br>2. Alvin Hidayat Putra Pratam (2024520050) — Frontend Web Engineer (`alvnhdytptr@gmail.com`)<br>3. Moh. Gilank Alamsyah (2024520052) — Mobile Native Engineer (`alamsyahgilank@gmail.com`)<br>4. Abdul Halim (2024520059) — DB Engineer & QA Lead (`kikybagaskara@gmail.com`) |
+| **Dosen Pengampu** | Dosen Pengampu Pemrograman Berbasis Platform |
 | **Tahun / Semester** | 2025/2026 Genap |
-| **Tautan Repositori** | `https://github.com/ISI_AKUN/pemrograman-berbasis-platform-kelompok-01-lentera` |
+| **Tautan Repositori** | `https://github.com/ImamCode-byte/LENTERA` |
 | **Tautan API / Demo** | `http://localhost/lentera/` (Lokal) / `http://[IP_SERVER]/lentera/` |
 
 ---
