@@ -54,3 +54,12 @@ frontend/web/
 - ✅ **Halaman Detail & Sitasi Otomatis**: Menampilkan abstrak lengkap, metadata pembimbing, tombol unduh PDF aman, dan generator sitasi (APA, IEEE, Harvard, BibTeX).
 - ✅ **Dasbor Penulis & Kurator**: Ruang kerja khusus peran untuk siklus pengajuan karya dan telaah naskah.
 - ✅ **Desain Responsif**: Menggunakan media query CSS modern untuk tampilan yang rapi di layar ponsel, tablet, dan desktop tanpa overflow horizontal.
+
+---
+
+## 5. Lembar Penanggung Jawab Modul Frontend Web
+
+* **Penanggung Jawab**: **Alvin Hidayat Putra Pratam** (NIM: 2024520050)
+* **Email GitHub**: `alvnhdytptr@gmail.com`
+* **Peran**: Frontend Web Engineer
+* **Status Modul**: 100% Selesai & Teruji (Design System Tokens, Responsive Mobile Drawer, Chart.js, Multi-Format Citation).
