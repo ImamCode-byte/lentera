@@ -64,3 +64,12 @@ backend/
 - ✅ **Audit Log Unduhan**: Setiap unduhan PDF mencatat identitas pengunduh, IP address, waktu, dan penambahan counter unduhan secara otomatis.
 - ✅ **Pencegahan Akses Langsung**: Folder upload dilindungi konfigurasi server sehingga berkas tidak dapat diakses langsung tanpa melalui pemeriksaan otorisasi di controller.
 - 📋 **REST API JSON**: Endpoint terstruktur untuk konsumsi aplikasi mobile native (Fase 4).
+
+---
+
+## 5. Lembar Penanggung Jawab Modul Backend & Keamanan
+
+* **Penanggung Jawab**: **Imam** (NIM: 2024520030)
+* **Email GitHub**: `imamdhespachito001@gmail.com`
+* **Peran**: Ketua Kelompok, Backend Lead & Security Architect
+* **Status Modul**: 100% Selesai & Teruji (Routing MVC, Singleton PDO, REST API JSON RFC 8259, Proteksi OWASP).
