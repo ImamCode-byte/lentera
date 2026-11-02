@@ -31,3 +31,12 @@ Dokumen manajemen tugas dan pelacakan progres pengembangan platform repositori L
 - ✅ **Selesai**: Pekerjaan telah tuntas diimplementasikan dan di-commit.
 - ⏳ **Menunggu Uji DB**: Menunggu aktivasi modul basis data lokal untuk eksekusi query.
 - 📋 **Terjadwal**: Pekerjaan direncanakan pada fase berikutnya sesuai urutan kerja.
+
+---
+
+## 2. Lembar Penanggung Jawab Database, Workflow & Dokumentasi
+
+* **Penanggung Jawab**: **Abdul Halim** (NIM: 2024520059)
+* **Email GitHub**: `kikybagaskara@gmail.com`
+* **Peran**: Database & QA Documentation Lead
+* **Status Modul**: 100% Selesai & Teruji (Skema Relasional 14 Tabel, Migrasi 001-017, Antrean Kurasi OJS, Verifikasi APC, Proposal & User Stories).
