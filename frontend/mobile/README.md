@@ -83,3 +83,12 @@ Berkas APK yang dihasilkan akan berada pada direktori:
 > [!NOTE]
 > **Pengujian Platform iOS (Apple)**:  
 > Kompilasi dan pengujian untuk platform iOS memerlukan komputer berbasis **macOS** dengan **Xcode**. Karena workstation ini menggunakan sistem operasi Windows, aplikasi mobile native secara jujur **belum diuji di lingkungan iOS nyata**. Basis kode Flutter dirancang sepenuhnya multiplatform dan siap dikompilasi pada perangkat macOS.
+
+---
+
+## 7. Lembar Penanggung Jawab Modul Mobile Flutter
+
+* **Penanggung Jawab**: **Moh. Gilank Alamsyah** (NIM: 2024520052)
+* **Email GitHub**: `alamsyahgilank@gmail.com`
+* **Peran**: Mobile Native Engineer
+* **Status Modul**: 100% Selesai & Teruji (Clean Architecture, Safe Area, Offline Handling, REST API Integration).
