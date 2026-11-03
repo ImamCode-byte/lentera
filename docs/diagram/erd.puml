@@ -1,0 +1,210 @@
+@startuml
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 5
+
+skinparam entity {
+    BackgroundColor #F8F9FA
+    BorderColor #333333
+    FontColor #202124
+}
+
+title Entity-Relationship Diagram (ERD) — Sistem Repositori LENTERA UNIRA (14 Tabel)
+
+entity "faculties" as faculties {
+    * id : INT (PK)
+    --
+    * code : VARCHAR(10)
+    * name : VARCHAR(100)
+    sort_order : INT
+    is_active : BOOLEAN
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "study_programs" as study_programs {
+    * id : INT (PK)
+    --
+    * code : VARCHAR(20)
+    * name : VARCHAR(100)
+    * degree : ENUM('S1','S2')
+    * faculty_id : INT (FK)
+    is_active : BOOLEAN
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "users" as users {
+    * id : INT (PK)
+    --
+    * name : VARCHAR(100)
+    username : VARCHAR(60)
+    * email : VARCHAR(150)
+    * password : VARCHAR(255)
+    * role : ENUM('author','curator','admin')
+    nim_nip : VARCHAR(30)
+    prodi_id : INT (FK)
+    affiliation : VARCHAR(150)
+    country : VARCHAR(60)
+    phone : VARCHAR(30)
+    orcid_id : VARCHAR(50)
+    avatar : VARCHAR(255)
+    bio : TEXT
+    is_reviewer_candidate : BOOLEAN
+    is_active : BOOLEAN
+    last_login_at : TIMESTAMP
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "work_types" as work_types {
+    * id : INT (PK)
+    --
+    * code : VARCHAR(10)
+    * name : VARCHAR(50)
+    description : TEXT
+    is_active : BOOLEAN
+}
+
+entity "works" as works {
+    * id : INT (PK)
+    --
+    * title : VARCHAR(500)
+    * abstract : TEXT
+    * author_id : INT (FK)
+    * prodi_id : INT (FK)
+    * work_type_id : INT (FK)
+    * status : ENUM('draft','submitted','in_review','revision','waiting_payment','published','rejected')
+    * year : SMALLINT
+    supervisor : VARCHAR(200)
+    view_count : INT UNSIGNED
+    download_count : INT UNSIGNED
+    submitted_at : TIMESTAMP
+    published_at : TIMESTAMP
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "work_keywords" as work_keywords {
+    * id : INT (PK)
+    --
+    * work_id : INT (FK)
+    * keyword : VARCHAR(50)
+}
+
+entity "work_files" as work_files {
+    * id : INT (PK)
+    --
+    * work_id : INT (FK)
+    * original_name : VARCHAR(255)
+    * stored_name : VARCHAR(255)
+    * file_path : VARCHAR(500)
+    * file_size : INT UNSIGNED
+    mime_type : VARCHAR(100)
+    version : INT
+    is_current : BOOLEAN
+    uploaded_at : TIMESTAMP
+}
+
+entity "reviews" as reviews {
+    * id : INT (PK)
+    --
+    * work_id : INT (FK)
+    * curator_id : INT (FK)
+    * action : ENUM('approve','revision','reject','in_review','acc_payment')
+    * comment : TEXT
+    created_at : TIMESTAMP
+}
+
+entity "paymentss" as paymentss {
+    * id : INT (PK)
+    --
+    * work_id : INT (FK)
+    * user_id : INT (FK)
+    * invoice_number : VARCHAR(50)
+    * amount : DECIMAL(12,2)
+    payment_method : VARCHAR(50)
+    destination_account : VARCHAR(100)
+    sender_name : VARCHAR(100)
+    reference_number : VARCHAR(100)
+    proof_file : VARCHAR(255)
+    admin_notes : TEXT
+    verified_by : INT (FK)
+    * status : ENUM('pending','completed','rejected')
+    paid_at : TIMESTAMP
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "download_logs" as download_logs {
+    * id : INT (PK)
+    --
+    work_id : INT (FK)
+    user_id : INT (FK)
+    * ip_address : VARCHAR(45)
+    user_agent : VARCHAR(500)
+    downloaded_at : TIMESTAMP
+}
+
+entity "notifications" as notifications {
+    * id : INT (PK)
+    --
+    * user_id : INT (FK)
+    * title : VARCHAR(100)
+    * message : TEXT
+    link : VARCHAR(255)
+    is_read : BOOLEAN
+    created_at : TIMESTAMP
+}
+
+entity "password_resets" as password_resets {
+    * id : INT (PK)
+    --
+    * user_id : INT (FK)
+    * token : VARCHAR(255)
+    * expires_at : TIMESTAMP
+    is_used : BOOLEAN
+    created_at : TIMESTAMP
+}
+
+entity "activity_logs" as activity_logs {
+    * id : INT (PK)
+    --
+    user_id : INT (FK)
+    * action : VARCHAR(50)
+    target_type : VARCHAR(100)
+    target_id : INT
+    description : TEXT
+    ip_address : VARCHAR(45)
+    created_at : TIMESTAMP
+}
+
+entity "settings" as settings {
+    * id : INT (PK)
+    --
+    * setting_key : VARCHAR(50)
+    setting_value : TEXT
+    setting_group : VARCHAR(50)
+    updated_at : TIMESTAMP
+}
+
+' Relasi Entitas (Crow's Foot Notation)
+faculties ||--o{ study_programs : "has"
+study_programs ||--o{ users : "enrolls"
+study_programs ||--o{ works : "contains"
+users ||--o{ works : "writes"
+work_types ||--o{ works : "categorizes"
+works ||--o{ work_keywords : "tagged_with"
+works ||--o{ work_files : "has_versions"
+works ||--o{ reviews : "reviewed_in"
+users ||--o{ reviews : "curates"
+works ||--o{ paymentss : "billed_in"
+users ||--o{ paymentss : "pays"
+users ||--o{ paymentss : "verifies"
+works ||--o{ download_logs : "tracked_in"
+users ||--o{ download_logs : "downloads"
+users ||--o{ notifications : "receives"
+users ||--o{ password_resets : "requests"
+users ||--o{ activity_logs : "triggers"
+
+@enduml
