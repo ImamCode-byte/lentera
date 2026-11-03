@@ -208,3 +208,4 @@ users ||--o{ password_resets : "requests"
 users ||--o{ activity_logs : "triggers"
 
 @enduml
+

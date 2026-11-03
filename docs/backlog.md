@@ -1,33 +1,52 @@
 # Backlog Pengerjaan Proyek — LENTERA (Kelompok 01)
+### Laman Etalase Karya Tulis Ilmiah Terpadu Akademik Universitas Madura (UNIRA)
 
-Dokumen manajemen tugas dan pelacakan progres pengembangan platform repositori Lentera.
-
----
-
-## Matriks Backlog Tugas
-
-| ID | Modul / Pekerjaan | Prioritas | Penanggung Jawab | Status | Tautan Berkas / Fitur |
-|:--:|---|:--:|:--:|:--:|---|
-| **BK-01** | Audit keamanan awal & perlindungan `.env` dari Git | 🔴 Tinggi | Imam | ✅ Selesai | `.gitignore`, `.env.example` |
-| **BK-02** | Proteksi akses langsung direktori uploads via `.htaccess` | 🔴 Tinggi | Imam | ✅ Selesai | `uploads/works/.htaccess` |
-| **BK-03** | Validasi status naskah pada unduhan `downloads.php` | 🔴 Tinggi | Imam | ✅ Selesai | `frontend/web/viewss/workss/downloads.php` |
-| **BK-04** | Migrasi non-destruktif ENUM `waiting_payment` & `acc_payment` | 🔴 Tinggi | Imam | ⏳ Menunggu Uji DB | `backend/databases/migrationss/014_...` |
-| **BK-05** | Penyesuaian struktur repository resmi dosen (`git mv`) | 🔴 Tinggi | Imam | ✅ Selesai | `backend/`, `frontend/`, `docs/` |
-| **BK-06** | Penyusunan template GitHub Issues & Pull Request | 🟡 Sedang | Abdul Halim | ✅ Selesai | `.github/` |
-| **BK-07** | Dokumentasi panduan kontribusi (`CONTRIBUTING.md`) | 🟡 Sedang | Abdul Halim | ✅ Selesai | `CONTRIBUTING.md` |
-| **BK-08** | Penyusunan proposal proyek & data pembagian tugas | 🟡 Sedang | Abdul Halim | ✅ Selesai | `docs/proposal.md`, `tugas-kelompok-1...` |
-| **BK-09** | Pembersihan folder kosong di `viewss/` & audit routing `?urls=` | 🟡 Sedang | Alvin / Imam | ✅ Selesai | `frontend/web/viewss/` |
-| **BK-10** | Standardisasi penamaan tampilan "Lentera" di web | 🟡 Sedang | Alvin | ✅ Selesai | Seluruh view frontend web |
-| **BK-11** | Optimasi responsivitas desktop, tablet, dan smartphone | 🟡 Sedang | Alvin | ✅ Selesai | `frontend/web/csss/styles.css` |
-| **BK-12** | Perancangan & implementasi REST API JSON (auth & catalog) | 🔴 Tinggi | Imam | ✅ Selesai | `backend/api/` |
-| **BK-13** | Inisialisasi basis kode Flutter multiplatform (Android & iOS) | 🔴 Tinggi | Moh. Gilank Alamsyah | ✅ Selesai | `frontend/mobile/` |
-| **BK-14** | Pembangunan antarmuka mobile native (login, katalog, detail) | 🔴 Tinggi | Moh. Gilank Alamsyah | ✅ Selesai | `frontend/mobile/lib/` |
-| **BK-15** | Pengujian fungsional 15 fitur acuan regresi | 🔴 Tinggi | Seluruh Anggota | 📋 Terjadwal (Fase 6) | `docs/tautan-video-pengujian.md` |
-| **BK-16** | Finalisasi berkas laporan resmi `.docx` | 🟡 Sedang | Abdul Halim | 📋 Terjadwal (Fase 6) | `docs/Laporan-Kelompok-01-Lentera.docx` |
+Dokumen **Product Backlog** ini berfungsi sebagai *single source of truth* (daftar acuan tunggal) seluruh kebutuhan kerja platform LENTERA. Butir pekerjaan diurutkan berdasarkan **Nilai Pengguna (User Value)** tertinggi ke terendah, bukan berdasarkan urutan teknis pengerjaan.
 
 ---
 
-### Keterangan Status:
-- ✅ **Selesai**: Pekerjaan telah tuntas diimplementasikan dan di-commit.
-- ⏳ **Menunggu Uji DB**: Menunggu aktivasi modul basis data lokal untuk eksekusi query.
-- 📋 **Terjadwal**: Pekerjaan direncanakan pada fase berikutnya sesuai urutan kerja.
+## 2.5 Product Backlog
+
+| ID | Item Pekerjaan (PBI) / Kebutuhan Pengguna | Points | Sprint | Status | Kriteria Selesai (Definition of Done) |
+|:---:|---|:---:|:---:|:---:|---|
+| **PBI-01** | **Beranda Repositori & Katalog Naskah Terbaru**<br/>Pengunjung dapat langsung melihat karya ilmiah terbitan terbaru dan profil kampus UNIRA saat membuka halaman muka. | 3 | S1 | **Done** | • Halaman beranda memuat section naskah terbaru terurut waktu terbit.<br/>• Kartu naskah dapat diklik menuju detail dan responsif di mobile. |
+| **PBI-02** | **Mesin Pencari Multi-Filter Kata Kunci, Fakultas & Prodi**<br/>Pengguna dapat mencari naskah ilmiah berdasarkan teks bebas judul/abstrak serta memfilter fakultas dan prodi. | 5 | S1 | **Done** | • Form pencarian memproses input via *parameterized query*.<br/>• Hanya naskah berstatus `'published'` yang tampil pada hasil pencarian. |
+| **PBI-03** | **Penyaringan per Jenis Dokumen & Rentang Tahun**<br/>Pengguna dapat memilah antara skripsi, tesis, jurnal, atau laporan KP serta membatasi tahun publikasi. | 3 | S1 | **Done** | • Filter dropdown tipe karya dan rentang tahun membatasi query secara tepat.<br/>• Komponen *empty state* muncul jika tidak ada data yang cocok. |
+| **PBI-04** | **Halaman Detail Naskah & Penampil Abstrak Lengkap**<br/>Pengguna dapat membaca abstrak lengkap, metadata nama dosen pembimbing, dan jumlah penayangan (*views*). | 3 | S1 | **Done** | • Menampilkan seluruh metadata naskah tanpa kebocoran data sensitif.<br/>• Nilai `view_count` bertambah dinamis saat halaman diakses. |
+| **PBI-05** | **Generator Sitasi Otomatis 1-Klik (APA, IEEE, Harvard, BibTeX)**<br/>Pengguna dapat menyalin kutipan akademik naskah dalam berbagai format internasional dengan 1 sentuhan. | 3 | S1 | **Done** | • Teks sitasi terstandar tersalin ke *clipboard* sistem seketika.<br/>• Tampil animasi umpan balik visual centang sukses ("Tersalin!"). |
+| **PBI-06** | **Pengunduh Berkas PDF Terproteksi dengan Audit Log**<br/>Pengunjung dapat mengunduh naskah utuh tanpa membuka URL fisik file, dan sistem mencatat IP serta waktu unduh. | 5 | S1 | **Done** | • Pengunduhan dialirkan melalui script `downloads.php`.<br/>• Record baru tersimpan di `download_logs` dan `download_count` bertambah +1. |
+| **PBI-07** | **Registrasi Mandiri Akun Penulis Mahasiswa/Dosen**<br/>Mahasiswa dan peneliti kampus dapat membuat akun secara mandiri dengan verifikasi prodi dan enkripsi sandi aman. | 3 | S1 | **Done** | • Validasi email unik, username unik, dan sandi ter-hash Argon2id/Bcrypt.<br/>• Akun tersimpan dengan role bawaan bernilai `'author'`. |
+| **PBI-08** | **Autentikasi Login Multi-Peran dengan Proteksi Brute-Force**<br/>Pengguna dapat masuk ke akun dengan pengalihan otomatis (*smart redirection*) sesuai wewenang peran masing-masing. | 3 | S1 | **Done** | • Regenerasi ID sesi (`session_regenerate_id(true)`) setelah login.<br/>• Author dialihkan ke dasbor karya, Kurator ke antrean telaah, Admin ke panel kontrol. |
+| **PBI-09** | **Dasbor Pemantauan Karya Pribadi Penulis**<br/>Penulis dapat melihat seluruh naskah yang pernah diajukannya beserta label badge status kurasi *real-time*. | 3 | S2 | **Done** | • Menampilkan daftar naskah penulis lengkap dengan status warna baku.<br/>• Tombol aksi (edit/revisi/bayar) aktif secara kontekstual sesuai status. |
+| **PBI-10** | **Formulir Pengajuan Naskah Baru & Validasi PDF 15MB**<br/>Penulis dapat mendaftarkan karya ilmiah baru beserta upload berkas PDF yang divalidasi MIME dan magic bytes. | 5 | S2 | **Done** | • Validasi input minimal judul $\ge 10$ dan abstrak $\ge 30$ karakter.<br/>• File PDF tersimpan dengan nama acak aman di folder terisolasi dan status naskah `'submitted'`. |
+| **PBI-11** | **Antrean Kurasi Naskah Masuk untuk Dewan Kurator**<br/>Dewan kurator memiliki ruang kerja khusus untuk memeriksa karya civitas yang menunggu ditelaah. | 5 | S2 | **Done** | • Halaman `/reviews/indexs.php` terproteksi wewenang role kurator/admin.<br/>• Menampilkan daftar karya berstatus `submitted` dan `in_review`. |
+| **PBI-12** | **Pratinjau Naskah Galley PDF Terproteksi Kurator**<br/>Kurator dapat membuka dan membaca dokumen naskah asli pada tab baru tanpa membocorkan path penyimpanan server. | 5 | S2 | **Done** | • Berkas PDF galley dialirkan melalui otorisasi peran middleware.<br/>• Pengguna tidak terotentikasi diblokir dengan kode HTTP 403 Forbidden. |
+| **PBI-13** | **Pengecekan Skor Kemiripan Teks (Similarity Index)**<br/>Kurator dapat melihat persentase kesamaan teks untuk mencegah penerbitan karya yang terindikasi plagiasi. | 3 | S2 | **Done** | • Persentase kemiripan tampil jelas pada baris tabel antrean kurasi.<br/>• Sistem memunculkan tanda visual jika angka kemiripan melebihi batas 25%. |
+| **PBI-14** | **Modal Keputusan Kurator (Approve, Revision, Reject)**<br/>Kurator dapat menetapkan keputusan telaah disertai catatan evaluasi akademik wajib untuk penulis. | 5 | S2 | **Done** | • Form mewajibkan pengisian catatan telaah jika kurator memilih opsi "Revisi".<br/>• Keputusan tercatat di tabel `reviews` dan status naskah diperbarui secara atomik. |
+| **PBI-15** | **Siklus Revisi Naskah Berversi (v2, v3...) oleh Penulis**<br/>Penulis dapat membaca catatan kurator dan mengunggah berkas PDF revisi baru untuk ditelaah ulang. | 5 | S2 | **Done** | • Formulir revisi mengunggah file baru dan menaikkan nomor versi di `work_files`.<br/>• Status naskah otomatis kembali menjadi `'submitted'` ke antrean kurator. |
+| **PBI-16** | **Notifikasi & Komparasi Berkas Versi Kurator**<br/>Kurator dapat melihat riwayat naskah versi sebelumnya guna memverifikasi apakah poin perbaikan telah dipenuhi. | 3 | S2 | **Done** | • Ruang kerja telaah menampilkan nomor versi naskah yang aktif (`v1`, `v2`...).<br/>• Riwayat versi terdahulu tetap dapat diakses untuk telaah komparatif. |
+| **PBI-17** | **Portal Panduan Pembayaran APC dengan QRIS Resmi UNIRA**<br/>Penulis naskah yang disetujui kurator dapat melihat invoice tagihan biaya publikasi dan kode QRIS kampus. | 3 | S3 | **Done** | • Halaman pembayaran menyajikan nomor invoice, judul naskah, dan nominal tarif.<br/>• Gambar barcode QRIS statis/dinamis tampil jelas untuk pemindaian mobile banking. |
+| **PBI-18** | **Formulir Unggah Bukti Struk Transfer Pembayaran APC**<br/>Penulis dapat mengirimkan foto struk transfer pembayaran ke sistem untuk diverifikasi bagian keuangan. | 3 | S3 | **Done** | • Form menerima unggahan berkas gambar (`.jpg`, `.png`) atau `.pdf`.<br/>• Status pembayaran diperbarui menjadi `pending_verification`. |
+| **PBI-19** | **Viewer Bukti Transfer Aman untuk Super Admin**<br/>Administrator dapat membuka dan memeriksa berkas struk pembayaran penulis pada penampil dokumen aman. | 3 | S3 | **Done** | • Tombol "Lihat Struk" membuka modal penampil berkas `view_proofs.php`.<br/>• Berkas bukti transfer tidak dapat diakses tanpa sesi admin yang valid. |
+| **PBI-20** | **Verifikasi Pembayaran & Auto-Publishing Karya Ilmiah**<br/>Admin dapat menyetujui struk transfer yang valid sehingga naskah otomatis berstatus terbit ke publik. | 5 | S3 | **Done** | • Status pembayaran berubah menjadi `verified` dan status karya menjadi `published`.<br/>• Sistem mengisi `published_at = NOW()` dan karya seketika tayang di etalase publik. |
+| **PBI-21** | **Penolakan Pembayaran Tidak Sah Disertai Catatan**<br/>Admin dapat menolak bukti bayar yang buram atau tidak sesuai mutasi rekening disertai catatan penjelasan. | 2 | S3 | **Done** | • Status pembayaran beralih ke `rejected` dan catatan tampil di dasbor penulis.<br/>• Penulis dapat mengunggah ulang bukti bayar yang benar. |
+| **PBI-22** | **Visualisasi Diagram Lingkaran Sebaran Fakultas (Chart.js)**<br/>Pengguna dapat melihat proporsi perolehan karya ilmiah antar-fakultas secara interaktif dan responsif. | 5 | S3 | **Done** | • Merender grafik Doughnut Chart.js berdasarkan data riil dari tabel `works`.<br/>• Tooltip interaktif menampilkan nama fakultas dan jumlah judul karya terbit. |
+| **PBI-23** | **Visualisasi Diagram Batang Tren Publikasi Tahunan**<br/>Pengguna dapat melihat grafik batang produktivitas publikasi civitas akademika dalam rentang 5 tahun terakhir. | 3 | S3 | **Done** | • Merender Bar Chart.js yang mengagregasikan volume karya terbit per tahun.<br/>• Tata letak grafik responsif menyesuaikan lebar layar perangkat pengguna. |
+| **PBI-24** | **Peringkat Karya Terpopuler (Top Downloaded Works)**<br/>Pengguna dapat melihat daftar 10 karya ilmiah dengan frekuensi pembacaan dan unduhan tertinggi di kampus. | 3 | S3 | **Done** | • Tabel menyajikan peringkat naskah diurutkan dari `download_count DESC`.<br/>• Judul naskah terhubung langsung ke halaman detail karya. |
+| **PBI-25** | **Panel Super Admin & Manajemen Pengguna**<br/>Administrator kampus dapat mengelola seluruh akun pengguna, mencari civitas via NIM/NIDN, dan mengatur status akun. | 5 | S4 | **Done** | • Halaman `/admins/indexs.php` menyajikan tabel pengguna dengan pencarian instan.<br/>• Admin dapat mereset wewenang atau mengunci akun yang terindikasi melanggar. |
+| **PBI-26** | **Pengangkatan Peran Kurator (Role Elevation Dosen)**<br/>Admin dapat mengangkat akun dosen dari peran Author menjadi Dewan Kurator secara langsung. | 3 | S4 | **Done** | • Aksi ganti role memperbarui kolom `role = 'curator'` pada tabel `users`.<br/>• Dosen yang diangkat langsung memiliki akses ke antrean kurasi OJS pada login berikutnya. |
+| **PBI-27** | **Manajemen Master Data Fakultas & Program Studi**<br/>Admin dapat menambah atau memperbarui daftar fakultas dan prodi UNIRA agar formulir pendaftaran selalu mutakhir. | 3 | S4 | **Done** | • Form input master fakultas dan prodi terintegrasi dengan integritas referensial FK.<br/>• Data baru langsung muncul di dropdown registrasi dan filter pencarian. |
+| **PBI-28** | **Monitoring Audit Log Unduhan & Log Aktivitas Sistem**<br/>Admin dapat memantau rekam jejak pengunduhan berkas PDF dan mutasi konfigurasi sistem untuk audit keamanan. | 3 | S4 | **Done** | • Menampilkan log alamat IP, browser *User-Agent*, dan waktu kejadian.<br/>• Data log bersifat *append-only* (tidak dapat dimanipulasi) untuk akreditasi kampus. |
+| **PBI-29** | **REST API JSON RFC 8259 Terotentikasi Bearer Token**<br/>Menyediakan endpoint RESTful API terstandarisasi untuk integrasi katalog publik dan autentikasi mobile client. | 5 | S4 | **Done** | • Endpoint `/api/v1/works`, `/api/v1/search`, dan `/api/health` mengembalikan JSON valid.<br/>• Endpoint author terproteksi verifikasi HMAC-SHA256 Bearer Token. |
+| **PBI-30** | **Aplikasi Mobile Flutter: Katalog & Pencarian Cepat**<br/>Pengguna smartphone dapat menjelajahi etalase karya dan mencari naskah secara native di Android dan iOS. | 5 | S4 | **Done** | • Aplikasi Flutter terhubung ke REST API backend dengan clean architecture.<br/>• Dilengkapi *debounced search*, pembaca teks abstrak, dan penyalin sitasi mobile. |
+| **PBI-31** | **Aplikasi Mobile Flutter: Offline State Handling**<br/>Aplikasi mobile tetap menyajikan data lokal dan banner ramah pengguna saat koneksi internet terputus. | 3 | S4 | **Done** | • Deteksi konektivitas jaringan menampilkan *offline banner* informatif.<br/>• Tersedia tombol "Coba Lagi" (*retry*) saat jaringan internet kembali stabil. |
+| **PBI-32** | **Auto-Healing Database Migration & OWASP Hardening**<br/>Sistem memiliki kemampuan pemulihan skema otomatis saat instalasi awal serta perlindungan serangan siber. | 5 | S4 | **Done** | • Konfigurasi database mendeteksi dan mengeksekusi DDL migrasi secara otomatis.<br/>• Seluruh formulir lolos uji anti-SQLi (PDO prepared statements) dan anti-XSS (UTF-8 encoding). |
+
+---
+
+## Lembar Penanggung Jawab Database, Workflow & Dokumentasi
+
+* **Penanggung Jawab**: **Abdul Halim** (NIM: 2024520059)
+* **Email GitHub**: `kikybagaskara@gmail.com`
+* **Peran**: Database & QA Documentation Lead
+* **Status Modul**: 100% Selesai & Teruji (Skema Relasional 14 Tabel, Migrasi 001-017, Antrean Kurasi OJS, Verifikasi APC, Proposal & User Stories).
