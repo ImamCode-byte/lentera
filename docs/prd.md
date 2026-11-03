@@ -604,3 +604,4 @@ Sistem dinyatakan telah selesai $100\%$ dan memenuhi seluruh standar praktikum a
   <b>LENTERA — Menerangi Karya, Menginspirasi Generasi</b><br/>
   <sub>Disusun dan Ditetapkan oleh Kelompok 01 • Universitas Madura (UNIRA) • 2026</sub>
 </div>
+

@@ -1,16 +1,26 @@
 Options +FollowSymLinks
 RewriteEngine On
 
-# 1. Arahkan aset statis langsung ke frontend/web
+# 1. Shortcut Rute Bersih (Clean URLs)
+RewriteRule ^api/health/?$ backend/api/health.php [L]
+RewriteRule ^admin/?$ frontend/web/viewss/admins/indexs.php [L]
+RewriteRule ^curator/?$ frontend/web/viewss/reviews/indexs.php [L]
+RewriteRule ^author/?$ frontend/web/viewss/workss/indexs.php [L]
+RewriteRule ^login/?$ frontend/web/viewss/auths/logins.php [L]
+RewriteRule ^register/?$ frontend/web/viewss/auths/registers.php [L]
+RewriteRule ^search/?$ frontend/web/viewss/searchs/indexs.php [L]
+RewriteRule ^statistics/?$ frontend/web/viewss/statisticss/indexs.php [L]
+
+# 2. Arahkan aset statis langsung ke frontend/web
 RewriteRule ^csss/(.*)$ frontend/web/csss/$1 [L]
 RewriteRule ^jss/(.*)$ frontend/web/jss/$1 [L]
 RewriteRule ^imgs/(.*)$ frontend/web/imgs/$1 [L]
 RewriteRule ^viewss/(.*)$ frontend/web/viewss/$1 [L]
 
-# 2. Arahkan root ke indexs.php
+# 3. Arahkan root ke indexs.php
 RewriteRule ^$ frontend/web/indexs.php [L]
 
-# 3. Routing dinamis
+# 4. Routing dinamis
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ frontend/web/indexs.php?urls=$1 [QSA,L]
