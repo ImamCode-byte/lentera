@@ -110,3 +110,4 @@ pie title Distribusi 52 User Story Berdasarkan Peran Pengguna
   <b>Sistem Repositori LENTERA — Universitas Madura (UNIRA)</b><br/>
   <sub>Disusun oleh Kelompok 01 (Imam, Alvin, Gilank, Halim) • PBP 2026</sub>
 </div>
+

@@ -1,0 +1,70 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam shadowing false
+
+skinparam rectangle {
+    BackgroundColor #FAFAFA
+    BorderColor #333333
+}
+
+skinparam usecase {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+}
+
+title Gambar 3.3 — Diagram Use Case Sub-Sistem Kurator & Super Admin (Lentera UNIRA)
+
+left to right direction
+
+actor "Kurator (Curator)" as Curator
+actor "Super Admin" as Admin
+
+rectangle "Sub-Sistem Kurator & Super Admin" {
+  usecase "UC-10: Masuk ke Akun (Login)" as UC10
+  usecase "UC-17: Keluar Sesi (Logout Aman)" as UC17
+  usecase "UC-18: Mengakses Antrean Kurasi Naskah" as UC18
+  usecase "UC-19: Memeriksa Indeks Kemiripan (Similarity)" as UC19
+  usecase "UC-20: Membuka & Menelaah Galley PDF" as UC20
+  usecase "UC-21: Menandai Status Naskah In Review" as UC21
+  usecase "UC-22: Memberikan Catatan & Minta Revisi" as UC22
+  usecase "UC-23: Menyetujui Mutu Naskah (Approve)" as UC23
+  usecase "UC-24: Menolak Naskah Ilmiah (Reject)" as UC24
+  usecase "UC-25: Melihat Riwayat Keputusan Kurasi" as UC25
+  usecase "UC-26: Mengakses Panel Kontrol Super Admin" as UC26
+  usecase "UC-27: Verifikasi Struk APC & Terbitkan Karya" as UC27
+  usecase "UC-28: Menolak Bukti Bayar APC Tidak Valid" as UC28
+  usecase "UC-29: Mengelola Data Pengguna & Hak Akses" as UC29
+  usecase "UC-30: Mengelola Master Fakultas & Prodi" as UC30
+  usecase "UC-31: Memantau Audit Log Unduhan & Aktivitas" as UC31
+  usecase "UC-32: Mengakses Rekapitulasi Borang Akreditasi" as UC32
+
+  UC22 .> UC20 : <<extend>>
+  UC23 .> UC20 : <<extend>>
+  UC24 .> UC20 : <<extend>>
+  UC28 .> UC27 : <<extend>>
+}
+
+Curator --> UC10
+Curator --> UC18
+Curator --> UC19
+Curator --> UC20
+Curator --> UC21
+Curator --> UC22
+Curator --> UC23
+Curator --> UC24
+Curator --> UC25
+Curator --> UC17
+
+Admin --> UC10
+Admin --> UC17
+Admin --> UC18
+Admin --> UC26
+Admin --> UC27
+Admin --> UC28
+Admin --> UC29
+Admin --> UC30
+Admin --> UC31
+Admin --> UC32
+
+@enduml

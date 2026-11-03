@@ -1,0 +1,66 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam shadowing false
+
+skinparam rectangle {
+    BackgroundColor #FAFAFA
+    BorderColor #333333
+}
+
+skinparam usecase {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+}
+
+title Gambar 3.2 — Diagram Use Case Sub-Sistem Publik & Penulis (Lentera UNIRA)
+
+left to right direction
+
+actor "Publik (Guest)" as Guest
+actor "Penulis (Author)" as Author
+
+rectangle "Sub-Sistem Publik & Penulis" {
+  usecase "UC-01: Menjelajah Beranda & Katalog Baru" as UC01
+  usecase "UC-02: Mencari Naskah via Kata Kunci" as UC02
+  usecase "UC-03: Menyaring Naskah per Fakultas & Prodi" as UC03
+  usecase "UC-04: Menyaring per Tipe Dokumen & Tahun" as UC04
+  usecase "UC-05: Melihat Detail Naskah & Abstrak" as UC05
+  usecase "UC-06: Menggunakan Generator Sitasi Otomatis" as UC06
+  usecase "UC-07: Mengunduh Berkas PDF Resmi" as UC07
+  usecase "UC-08: Melihat Visualisasi Statistik Chart.js" as UC08
+  usecase "UC-09: Mendaftar Akun Penulis Baru" as UC09
+  usecase "UC-10: Masuk ke Akun (Login)" as UC10
+  usecase "UC-11: Mengakses Dasbor Karya Penulis" as UC11
+  usecase "UC-12: Mengunggah Naskah Ilmiah Baru" as UC12
+  usecase "UC-13: Membaca Catatan Evaluasi Kurator" as UC13
+  usecase "UC-14: Mengunggah Dokumen Revisi Berversi" as UC14
+  usecase "UC-15: Mengakses Panduan Pembayaran APC" as UC15
+  usecase "UC-16: Mengunggah Bukti Struk Bayar APC" as UC16
+  usecase "UC-17: Keluar Sesi (Logout Aman)" as UC17
+
+  UC05 .> UC06 : <<include>>
+  UC07 .> UC05 : <<depends on>>
+  UC14 .> UC13 : <<depends on>>
+  UC16 .> UC15 : <<include>>
+}
+
+Guest --> UC01
+Guest --> UC02
+Guest --> UC03
+Guest --> UC04
+Guest --> UC05
+Guest --> UC07
+Guest --> UC08
+Guest --> UC09
+
+Author --> UC10
+Author --> UC11
+Author --> UC12
+Author --> UC13
+Author --> UC14
+Author --> UC15
+Author --> UC16
+Author --> UC17
+
+@enduml
