@@ -1,0 +1,49 @@
+@startuml
+skinparam activity {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #202124
+}
+skinparam swimlane {
+    BorderColor #333333
+    TitleFontColor #1A73E8
+}
+
+title Gambar 6.1 — Activity Diagram: Alur Pengajuan Mandiri Naskah Baru (Penulis & Sistem)
+
+|Penulis (Author)|
+start
+:Mengakses Menu "Unggah Naskah Baru" (/workss/creates.php);
+:Mengisi Formulir Metadata (Judul, Abstrak, Kata Kunci, Dosen Pembimbing, Tahun);
+:Memilih Berkas Naskah PDF dari Perangkat Lokal;
+:Menekan Tombol "Ajukan Naskah ke Kurator";
+
+|Sistem LENTERA|
+:Memvalidasi Token CSRF Sesi;
+if (Token CSRF Valid?) then (Ya)
+  :Memvalidasi Format & Ukuran Berkas;
+  if (Ekstensi .pdf, Magic Bytes %PDF- & Ukuran <= 15MB?) then (Valid)
+    :Membuat Nama Berkas Unik Acak (UUID/Hash);
+    :Menyimpan Berkas PDF ke uploads/works/;
+    :Menyimpan Record Naskah ke Tabel works (Status: 'submitted');
+    :Menyimpan Relasi Versi ke Tabel work_files (version: 1, is_current: 1);
+    :Menyimpan Indeks Kata Kunci ke Tabel work_keywords;
+    
+    |Penulis (Author)|
+    :Menerima Pesan Konfirmasi "Naskah Berhasil Diajukan";
+    :Melihat Naskah Berstatus "Submitted" di Dasbor Pribadi;
+    stop
+  else (Tidak Valid)
+    |Sistem LENTERA|
+    :Tampilkan Pesan Galat "Berkas Wajib PDF Asli & Maksimal 15MB";
+    |Penulis (Author)|
+    :Memperbaiki Pilihan Berkas Naskah;
+    stop
+  endif
+else (Tidak Valid)
+  |Sistem LENTERA|
+  :Blokir Permintaan (HTTP 403 Forbidden - CSRF Expired);
+  stop
+endif
+
+@enduml

@@ -1,0 +1,71 @@
+@startuml
+skinparam activity {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #202124
+}
+skinparam swimlane {
+    BorderColor #333333
+    TitleFontColor #1A73E8
+}
+
+title Gambar 6.2 — Activity Diagram: Alur Penelaahan Sejawat OJS & Evaluasi Editorial (Kurator, Sistem, Penulis)
+
+|Dewan Kurator (Curator)|
+start
+:Membuka Dasbor Antrean Kurasi (/reviews/indexs.php);
+:Memilih Naskah Masuk dari Tabel Antrean;
+:Mengklik Aksi "Tandai In Review";
+
+|Sistem LENTERA|
+:Memperbarui Kolom status = 'in_review' pada Tabel works;
+:Menampilkan Nilai Similarity Score & Tombol Pratinjau Galley PDF;
+
+|Dewan Kurator (Curator)|
+:Membuka & Membaca Naskah Galley PDF Terproteksi;
+:Memeriksa Kesesuaian Metodologi, Struktur & Etika Akademik;
+:Membuka Modal Form Keputusan Kurator;
+
+if (Keputusan Kurator?) then (Setujui / Approve)
+  :Memilih Opsi "Approve (Setujui Naskah)";
+  :Menekan Tombol "Simpan Keputusan";
+  |Sistem LENTERA|
+  :Memperbarui status = 'waiting_payment' (atau 'published');
+  :Menyimpan Riwayat Keputusan ke Tabel reviews;
+  |Penulis (Author)|
+  :Melihat Status Naskah Berubah Menjadi "Menunggu Pembayaran APC";
+  stop
+elseif (Minta Revisi / Revision)
+  |Dewan Kurator (Curator)|
+  :Memilih Opsi "Revision (Perlu Revisi)";
+  :Mengetikkan Poin Catatan Telaah Perbaikan Wajib;
+  :Menekan Tombol "Simpan Keputusan";
+  |Sistem LENTERA|
+  :Menyimpan Catatan Telaah ke Tabel reviews;
+  :Memperbarui status = 'revision';
+  |Penulis (Author)|
+  :Membaca Catatan Telaah Evaluasi di Dasbor Pribadi;
+  :Membuka Formulir Revisi Naskah (/workss/revises.php);
+  :Mengunggah Berkas PDF Revisi Baru;
+  :Menekan Tombol "Kirim Dokumen Revisi";
+  |Sistem LENTERA|
+  :Menonaktifkan Versi Lama (is_current = 0);
+  :Menyimpan Versi Baru (version = v2, is_current = 1);
+  :Mengembalikan status = 'submitted' ke Antrean Kurator;
+  |Dewan Kurator (Curator)|
+  :Menerima Kembali Naskah Revisi untuk Telaah Ulang;
+  stop
+else (Tolak / Reject)
+  |Dewan Kurator (Curator)|
+  :Memilih Opsi "Reject (Tolak Naskah)";
+  :Mengetikkan Alasan Penolakan Plagiasi/Pelanggaran;
+  :Menekan Tombol "Simpan Keputusan";
+  |Sistem LENTERA|
+  :Memperbarui status = 'rejected';
+  :Menyimpan Riwayat Penolakan ke Tabel reviews;
+  |Penulis (Author)|
+  :Melihat Notifikasi Penolakan Karya pada Dasbor Pribadi;
+  stop
+endif
+
+@enduml

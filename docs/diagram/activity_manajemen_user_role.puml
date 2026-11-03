@@ -1,0 +1,46 @@
+@startuml
+skinparam activity {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #202124
+}
+skinparam swimlane {
+    BorderColor #333333
+    TitleFontColor #1A73E8
+}
+
+title Gambar 6.5 — Activity Diagram: Alur Manajemen Pengguna & Pengangkatan Peran Kurator (Admin, Sistem, Kurator)
+
+|Super Admin|
+start
+:Mengakses Menu Manajemen Pengguna (/admins/indexs.php);
+:Memasukkan Nama atau NIDN Dosen pada Kotak Pencarian;
+
+|Sistem LENTERA|
+:Menampilkan Data Pengguna Sesuai Kata Kunci Pencarian;
+
+|Super Admin|
+:Meninjau Profil & Riwayat NIDN Dosen;
+:Mengklik Tombol "Ubah Hak Akses / Role Elevation";
+:Memilih Peran Baru: "Kurator (Curator)";
+:Menekan Tombol "Simpan Perubahan";
+
+|Sistem LENTERA|
+:Memvalidasi Otorisasi Sesi Super Admin;
+:Mengupdate Kolom role = 'curator' pada Tabel users;
+:Mencatat Mutasi Hak Akses ke Tabel activity_logs;
+:Menampilkan Pesan Sukses "Peran Pengguna Berhasil Diangkat Menjadi Kurator";
+
+|Dosen / Kurator Baru|
+:Melakukan Login Masuk ke Portal LENTERA;
+
+|Sistem LENTERA|
+:Memeriksa Hak Akses Pengguna pada Auth Middleware;
+:Mendeteksi Role Pengguna adalah 'curator';
+:Mengarahkan Pengguna Langsung ke Ruang Kerja Antrean Kurasi (/reviews/indexs.php);
+
+|Dosen / Kurator Baru|
+:Melihat Panel Antrean Naskah Masuk & Siap Menelaah Karya Civitas;
+stop
+
+@enduml

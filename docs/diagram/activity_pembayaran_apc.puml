@@ -1,0 +1,62 @@
+@startuml
+skinparam activity {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #202124
+}
+skinparam swimlane {
+    BorderColor #333333
+    TitleFontColor #1A73E8
+}
+
+title Gambar 6.3 — Activity Diagram: Alur Transaksi APC, Verifikasi Bukti Bayar & Penerbitan Karya (Penulis, Sistem, Super Admin)
+
+|Penulis (Author)|
+start
+:Melihat Status Naskah "Waiting Payment" di Dasbor Karya;
+:Mengklik Tombol "Bayar Biaya Publikasi APC" (/workss/payments.php);
+
+|Sistem LENTERA|
+:Menampilkan Rincian Tagihan Invoice & Kode QRIS Resmi UNIRA;
+
+|Penulis (Author)|
+:Melakukan Transfer Pembayaran via M-Banking / Dompet Digital;
+:Mengambil Foto Struk / Screenshot Bukti Transfer;
+:Mengunggah Berkas Bukti Bayar pada Formulir Konfirmasi;
+:Menekan Tombol "Kirim Konfirmasi Pembayaran";
+
+|Sistem LENTERA|
+:Memvalidasi Format Gambar/PDF Bukti Transfer;
+:Menyimpan Berkas Struk ke uploads/payment/;
+:Mencatat Record Transaksi ke Tabel payments (Status: 'pending_verification');
+
+|Super Admin|
+:Membuka Panel Kontrol Admin (/admins/indexs.php);
+:Membuka Tab "Verifikasi Pembayaran APC";
+:Mengklik Tombol "Lihat Struk" (view_proofs.php);
+:Mencocokkan Mutasi Rekening Bank Kampus;
+
+if (Bukti Bayar Sah & Sesuai Mutasi?) then (Ya / Sah)
+  :Mengklik Tombol "Verifikasi & Terbitkan";
+  |Sistem LENTERA|
+  :Memperbarui status pembayaran = 'verified' pada Tabel payments;
+  :Secara Atomik Mengupdate status karya = 'published';
+  :Mengisi Timestamp published_at = NOW();
+  :Mencatat Aktivitas ke Tabel activity_logs;
+  |Penulis (Author)|
+  :Menerima Notifikasi Status "Published";
+  :Melihat Karya Tayang di Beranda & Etalase Repositori Publik;
+  stop
+else (Tidak Sah / Buram)
+  |Super Admin|
+  :Mengklik Tombol "Tolak Pembayaran";
+  :Mengetikkan Catatan Alasan Penolakan;
+  |Sistem LENTERA|
+  :Memperbarui status pembayaran = 'rejected';
+  |Penulis (Author)|
+  :Melihat Peringatan Penolakan Struk di Dasbor Pembayaran;
+  :Mengunggah Ulang Bukti Transfer yang Benar;
+  stop
+endif
+
+@enduml

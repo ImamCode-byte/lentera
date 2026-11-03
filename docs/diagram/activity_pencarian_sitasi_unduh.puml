@@ -1,0 +1,62 @@
+@startuml
+skinparam activity {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #202124
+}
+skinparam swimlane {
+    BorderColor #333333
+    TitleFontColor #1A73E8
+}
+
+title Gambar 6.4 — Activity Diagram: Alur Pencarian Naskah, Sitasi 1-Klik & Unduhan PDF Aman (Publik & Sistem)
+
+|Publik (Guest / Mahasiswa)|
+start
+:Membuka Halaman Beranda atau Halaman Pencarian (/search);
+:Memasukkan Kata Kunci Judul / Abstrak;
+:Memilih Filter Tambahan (Fakultas, Prodi, Tahun, Tipe Dokumen);
+:Menekan Tombol "Cari Naskah";
+
+|Sistem LENTERA|
+:Sanitasi Input & Eksekusi Parameterized Query;
+:Menyaring Karya Mutlak Berstatus 'published';
+if (Ditemukan Karya yang Cocok?) then (Ya)
+  :Merender Kartu Daftar Naskah Hasil Pencarian;
+  
+  |Publik (Guest / Mahasiswa)|
+  :Mengklik Salah Satu Judul Naskah;
+  
+  |Sistem LENTERA|
+  :Membuka Halaman Detail Naskah (/workss/details.php);
+  :Menampilkan Abstrak Lengkap & Metadata Pembimbing;
+  :Menggenerasi Format Sitasi Otomatis (APA, IEEE, Harvard, BibTeX);
+  
+  |Publik (Guest / Mahasiswa)|
+  :Mengklik Tombol "Salin Sitasi (APA)";
+  
+  |Sistem LENTERA|
+  :Menyalin Teks Sitasi ke Clipboard Sistem dengan Animasi Sukses;
+  
+  |Publik (Guest / Mahasiswa)|
+  :Mengklik Tombol "Unduh Naskah PDF";
+  
+  |Sistem LENTERA|
+  :Meneruskan Request ke Skrip Streaming Aman (/workss/downloads.php);
+  :Memvalidasi Status Naskah 'published';
+  :Mencatat Rekam Jejak ke Tabel download_logs (IP, User-Agent, Waktu);
+  :Menaikkan Counter download_count = download_count + 1;
+  :Mengalirkan Header HTTP Content-Type application/pdf;
+  
+  |Publik (Guest / Mahasiswa)|
+  :Peramban Mengunduh Berkas PDF Resmi Kampus;
+  stop
+else (Tidak Ditemukan)
+  |Sistem LENTERA|
+  :Menampilkan Komponen Empty State Informatif;
+  |Publik (Guest / Mahasiswa)|
+  :Mereset Filter atau Mencoba Kata Kunci Alternatif;
+  stop
+endif
+
+@enduml
